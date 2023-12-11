@@ -54,6 +54,8 @@ namespace SyncCache {
 class ProcessMutex;
 
 struct User {
+    User() = default;
+    User(const User &other) = default;
     User& operator=(const User &other);
 
     int accountId = 0;
@@ -65,6 +67,8 @@ struct User {
 };
 
 struct Album {
+    Album() = default;
+    Album(const Album &other) = default;
     Album& operator=(const Album &other);
 
     int accountId = 0;
@@ -80,6 +84,8 @@ struct Album {
 };
 
 struct Photo {
+    Photo() = default;
+    Photo(const Photo &other) = default;
     Photo& operator=(const Photo &other);
 
     int accountId = 0;
