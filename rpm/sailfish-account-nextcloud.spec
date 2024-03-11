@@ -58,12 +58,11 @@ fi
 %{_datadir}/accounts/ui/nextcloud.qml
 %{_datadir}/accounts/ui/nextcloud-settings.qml
 %{_datadir}/accounts/ui/nextcloud-update.qml
-# TODO: only install the appropriate scale factor icons for the build target?  How?
-%{_datadir}/themes/sailfish-default/meegotouch/*/icons/graphic-service-nextcloud.png
-%{_datadir}/themes/sailfish-default/meegotouch/*/icons/graphic-m-service-nextcloud.png
-%{_datadir}/themes/sailfish-default/meegotouch/*/icons/graphic-s-service-nextcloud.png
-%{_datadir}/themes/sailfish-default/meegotouch/*/icons/icon-l-nextcloud.png
-%{_datadir}/themes/sailfish-default/meegotouch/*/icons/icon-m-file-folder-nextcloud.png
+%{_datadir}/themes/sailfish-default/silica/*/icons/graphic-service-nextcloud.png
+%{_datadir}/themes/sailfish-default/silica/*/icons/graphic-m-service-nextcloud.png
+%{_datadir}/themes/sailfish-default/silica/*/icons/graphic-s-service-nextcloud.png
+%{_datadir}/themes/sailfish-default/silica/*/icons/icon-l-nextcloud.png
+%{_datadir}/themes/sailfish-default/silica/*/icons/icon-m-file-folder-nextcloud.png
 
 
 %package -n buteo-sync-plugin-nextcloud-posts
