@@ -1,10 +1,9 @@
 Name: sailfish-account-nextcloud
-Summary: Account plugin for Nextcloud
+License: Proprietary
 Version: 0.1.13
 Release: 1
-License: BSD
-URL: https://github.com/sailfishos/sailfish-account-nextcloud
 Source0: %{name}-%{version}.tar.bz2
+Summary: Account plugin for Nextcloud
 BuildRequires: qt5-qmake
 BuildRequires: sailfish-svg2png
 BuildRequires: pkgconfig(Qt5Core)
@@ -43,7 +42,6 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_libdir}/libnextcloudcommon.so.*
 %exclude %{_libdir}/libnextcloudcommon.so
 %{_libdir}/libnextcloudbuteocommon.so.*
@@ -77,7 +75,6 @@ Provides synchronisation of posts blobs with Nextcloud.
 
 %files -n buteo-sync-plugin-nextcloud-posts
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-posts-client.so
 %config %{_sysconfdir}/buteo/profiles/client/nextcloud-posts.xml
 %config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Posts.xml
@@ -92,7 +89,6 @@ Provides integration of Nextcloud notifications into Events view
 
 %files -n eventsview-extensions-nextcloud
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_datadir}/translations/eventsview-nextcloud_eng_en.qm
 %{_libdir}/qt5/qml/com/jolla/eventsview/nextcloud/*
 %{_datadir}/lipstick/eventfeed/*
@@ -122,7 +118,6 @@ Provides synchronisation of backup/restore blobs with Nextcloud.
 
 %files -n buteo-sync-plugin-nextcloud-backup
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-backup-client.so
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-backupquery-client.so
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-backuprestore-client.so
@@ -146,7 +141,6 @@ Provides synchronisation of gallery images with Nextcloud.
 
 %files -n buteo-sync-plugin-nextcloud-images
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-images-client.so
 %config %{_sysconfdir}/buteo/profiles/client/nextcloud-images.xml
 %config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Images.xml
@@ -162,7 +156,6 @@ Provides integration of Nextcloud images into Gallery application.
 
 %files -n jolla-gallery-extension-nextcloud
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_datadir}/translations/gallery-extension-nextcloud_eng_en.qm
 %{_datadir}/jolla-gallery/mediasources/NextcloudCacheMediaSource.qml
 %{_libdir}/qt5/qml/com/jolla/gallery/nextcloud/NextcloudGalleryIcon.qml
@@ -202,7 +195,6 @@ Nextcloud file sharing plugin for Transfer Engine.
 
 %files -n transferengine-plugin-nextcloud
 %defattr(-,root,root,-)
-%license LICENSE.BSD
 %{_libdir}/nemo-transferengine/plugins/sharing/libnextcloudshareplugin.so
 %{_libdir}/nemo-transferengine/plugins/transfer/libnextcloudtransferplugin.so
 %{_datadir}/nemo-transferengine/plugins/sharing/NextcloudShareFile.qml
