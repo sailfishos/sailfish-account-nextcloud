@@ -245,7 +245,7 @@ bool Syncer::performNotificationDeleteRequest(const QStringList &notificationIds
             connect(reply, &QNetworkReply::finished,
                     this, &Syncer::handleNotificationDeleteReply);
         } else {
-            qCWarning(lcNextcloud) << "Failed to start request to delete notification:" << reply->error();
+            qCWarning(lcNextcloud) << "Failed to start request to delete notification";
         }
     }
 
