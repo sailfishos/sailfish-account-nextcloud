@@ -77,12 +77,15 @@ void EventCacheThreadWorker::flagEventForDeletion(int accountId, const QString &
     }
 }
 
-void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &requestTemplate)
+void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, const QString &eventId,
+                                                const QNetworkRequest &requestTemplate)
 {
     DatabaseError error;
     Event event = m_db.event(accountId, eventId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populateEventImageFailed(idempToken, QStringLiteral("Error occurred while reading event info from db: %1").arg(error.errorMessage));
+        emit populateEventImageFailed(idempToken,
+                                      QStringLiteral("Error occurred while reading event info from db: %1")
+                                      .arg(error.errorMessage));
         return;
     }
 
@@ -112,11 +115,13 @@ void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, c
                 event.imageUrl,
                 QStringLiteral("%1/event-%2-icon").arg(EventCache::eventCacheDir(accountId)).arg(event.eventId),
                 requestTemplate);
-    connect(watcher, &EventImageDownloadWatcher::downloadFailed, this, [this, watcher, idempToken] (const QString &errorMessage) {
+    connect(watcher, &EventImageDownloadWatcher::downloadFailed,
+            this, [this, watcher, idempToken] (const QString &errorMessage) {
         emit populateEventImageFailed(idempToken, errorMessage);
         watcher->deleteLater();
     });
-    connect(watcher, &EventImageDownloadWatcher::downloadFinished, this, [this, watcher, event, idempToken] (const QUrl &filePath) {
+    connect(watcher, &EventImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, event, idempToken] (const QUrl &filePath) {
         // the file has been downloaded to disk.  attempt to update the database.
         DatabaseError storeError;
         Event eventToStore;
@@ -156,17 +161,27 @@ EventCachePrivate::EventCachePrivate(EventCache *parent)
     connect(this, &EventCachePrivate::flagEventForDeletion, m_worker, &EventCacheThreadWorker::flagEventForDeletion);
     connect(this, &EventCachePrivate::populateEventImage, m_worker, &EventCacheThreadWorker::populateEventImage);
 
-    connect(m_worker, &EventCacheThreadWorker::openDatabaseFailed, parent, &EventCache::openDatabaseFailed);
-    connect(m_worker, &EventCacheThreadWorker::openDatabaseFinished, parent, &EventCache::openDatabaseFinished);
-    connect(m_worker, &EventCacheThreadWorker::requestEventsFailed, parent, &EventCache::requestEventsFailed);
-    connect(m_worker, &EventCacheThreadWorker::requestEventsFinished, parent, &EventCache::requestEventsFinished);
-    connect(m_worker, &EventCacheThreadWorker::deleteEventFailed, parent, &EventCache::deleteEventFailed);
-    connect(m_worker, &EventCacheThreadWorker::deleteEventFinished, parent, &EventCache::deleteEventFinished);
-    connect(m_worker, &EventCacheThreadWorker::flagEventForDeletionFailed, parent, &EventCache::flagEventForDeletionFailed);
-    connect(m_worker, &EventCacheThreadWorker::flagEventForDeletionFinished, parent, &EventCache::flagEventForDeletionFinished);
+    connect(m_worker, &EventCacheThreadWorker::openDatabaseFailed,
+            parent, &EventCache::openDatabaseFailed);
+    connect(m_worker, &EventCacheThreadWorker::openDatabaseFinished,
+            parent, &EventCache::openDatabaseFinished);
+    connect(m_worker, &EventCacheThreadWorker::requestEventsFailed,
+            parent, &EventCache::requestEventsFailed);
+    connect(m_worker, &EventCacheThreadWorker::requestEventsFinished,
+            parent, &EventCache::requestEventsFinished);
+    connect(m_worker, &EventCacheThreadWorker::deleteEventFailed,
+            parent, &EventCache::deleteEventFailed);
+    connect(m_worker, &EventCacheThreadWorker::deleteEventFinished,
+            parent, &EventCache::deleteEventFinished);
+    connect(m_worker, &EventCacheThreadWorker::flagEventForDeletionFailed,
+            parent, &EventCache::flagEventForDeletionFailed);
+    connect(m_worker, &EventCacheThreadWorker::flagEventForDeletionFinished,
+            parent, &EventCache::flagEventForDeletionFinished);
 
-    connect(m_worker, &EventCacheThreadWorker::populateEventImageFailed, parent, &EventCache::populateEventImageFailed);
-    connect(m_worker, &EventCacheThreadWorker::populateEventImageFinished, parent, &EventCache::populateEventImageFinished);
+    connect(m_worker, &EventCacheThreadWorker::populateEventImageFailed,
+            parent, &EventCache::populateEventImageFailed);
+    connect(m_worker, &EventCacheThreadWorker::populateEventImageFinished,
+            parent, &EventCache::populateEventImageFinished);
 
     connect(m_worker, &EventCacheThreadWorker::eventsStored, parent, &EventCache::eventsStored);
     connect(m_worker, &EventCacheThreadWorker::eventsDeleted, parent, &EventCache::eventsDeleted);
@@ -200,7 +215,8 @@ QString EventCache::eventCacheDir(int accountId)
 
 QString EventCache::eventCacheRootDir()
 {
-    return QStringLiteral("%1/system/privileged/Posts").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
+    return QStringLiteral("%1/system/privileged/Posts")
+            .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
 }
 
 void EventCache::openDatabase(const QString &databaseFile)
@@ -227,7 +243,8 @@ void EventCache::flagEventForDeletion(int accountId, const QString &eventId)
     emit d->flagEventForDeletion(accountId, eventId);
 }
 
-void EventCache::populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &requestTemplate)
+void EventCache::populateEventImage(int idempToken, int accountId, const QString &eventId,
+                                    const QNetworkRequest &requestTemplate)
 {
     Q_D(EventCache);
     emit d->populateEventImage(idempToken, accountId, eventId, requestTemplate);

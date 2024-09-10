@@ -32,6 +32,7 @@ NotificationGroupMember {
 
     Image {
         id: image
+
         y: Theme.paddingLarge
         width: Theme.iconSizeMedium
         height: Theme.iconSizeMedium
@@ -52,6 +53,7 @@ NotificationGroupMember {
 
         Label {
             id: subjectLabel
+
             width: parent.width
             elide: Text.ElideRight
             wrapMode: Text.Wrap
@@ -60,6 +62,7 @@ NotificationGroupMember {
 
         Label {
             id: messageLabel
+
             visible: text.length !== 0
             width: parent.width
             elide: Text.ElideRight
@@ -68,7 +71,6 @@ NotificationGroupMember {
         }
 
         Label {
-            id: timestampLabel
             text: Format.formatDate(root.timestamp, Format.TimeElapsed)
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor

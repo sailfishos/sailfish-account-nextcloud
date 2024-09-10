@@ -90,7 +90,8 @@ static bool finalizeTransaction(QSqlDatabase &database, bool success)
     return false;
 }
 
-static bool executeUpgradeStatements(QSqlDatabase &database, const int currentSchemaVersion, const QVector<UpgradeOperation> &upgradeVersions)
+static bool executeUpgradeStatements(QSqlDatabase &database, const int currentSchemaVersion,
+                                     const QVector<UpgradeOperation> &upgradeVersions)
 {
     // Check that the defined schema matches the array of upgrade scripts
     if (currentSchemaVersion != upgradeVersions.size()) {
@@ -166,7 +167,8 @@ static bool checkDatabase(QSqlDatabase &database)
     return false;
 }
 
-static bool upgradeDatabase(QSqlDatabase &database, const int currentSchemaVersion, const QVector<UpgradeOperation> &upgradeVersions)
+static bool upgradeDatabase(QSqlDatabase &database, const int currentSchemaVersion,
+                            const QVector<UpgradeOperation> &upgradeVersions)
 {
     if (!beginTransaction(database))
         return false;
@@ -189,7 +191,8 @@ static bool configureDatabase(QSqlDatabase &database)
     return true;
 }
 
-static bool executeCreationStatements(QSqlDatabase &database, const int currentSchemaVersion, const QVector<const char *> &createStatements)
+static bool executeCreationStatements(QSqlDatabase &database, const int currentSchemaVersion,
+                                      const QVector<const char *> &createStatements)
 {
     for (int i = 0; i < createStatements.size(); ++i) {
         QSqlQuery query(database);
@@ -208,7 +211,8 @@ static bool executeCreationStatements(QSqlDatabase &database, const int currentS
     return true;
 }
 
-static bool prepareDatabase(QSqlDatabase &database, const int currentSchemaVersion, const QVector<const char *> &createStatements)
+static bool prepareDatabase(QSqlDatabase &database, const int currentSchemaVersion,
+                            const QVector<const char *> &createStatements)
 {
     if (!configureDatabase(database))
         return false;

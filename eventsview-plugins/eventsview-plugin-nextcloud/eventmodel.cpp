@@ -314,14 +314,16 @@ void NextcloudEventModel::refresh()
                     && newValuesIter->eventId == oldValuesIter->eventId;
             bool newNeedsIncrement =
                     // if they both need incrementing, then newIter needs incrementing
-                    bothNeedIncrement ? true
-                    // if they are both not at end, and newIter.timestamp > oldIter.timestamp, then newIter needs incrementing
-                    : ((newValuesIter != events.constEnd() &&
-                        oldValuesIter != oldEvents.constEnd() &&
-                        newValuesIter->timestamp > oldValuesIter->timestamp)
-                    // if only newIter is not at end, then newIter needs incrementing
-                    || (newValuesIter != events.constEnd() &&
-                        oldValuesIter == oldEvents.constEnd()));
+                    bothNeedIncrement
+                    ? true
+                    : // if they are both not at end, and newIter.timestamp > oldIter.timestamp,
+                      // then newIter needs incrementing
+                      ((newValuesIter != events.constEnd()
+                        && oldValuesIter != oldEvents.constEnd()
+                        && newValuesIter->timestamp > oldValuesIter->timestamp)
+                       || // if only newIter is not at end, then newIter needs incrementing
+                          (newValuesIter != events.constEnd()
+                           && oldValuesIter == oldEvents.constEnd()));
 
             if (bothNeedIncrement) {
                 // the current event exists in both old + new.

@@ -122,16 +122,19 @@ void Syncer::handleNotificationListReply()
     SyncCache::EventDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Posts/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Posts/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
-        emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
         return;
     }
 
     if (!db.beginTransaction(&error)) {
-        emit finishWithError(QStringLiteral("Failed to begin Posts transaction: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to begin Posts transaction: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
         return;
     }
 
@@ -158,13 +161,15 @@ void Syncer::handleNotificationListReply()
         for (const SyncCache::Event &event : localEvents) {
             // Find events that are locally marked for deletion
             if (event.deletedLocally) {
-                qCDebug(lcNextcloud) << "Event deleted locally:" << event.eventId << event.eventSubject << event.eventText;
+                qCDebug(lcNextcloud) << "Event deleted locally:" << event.eventId
+                                     << event.eventSubject << event.eventText;
                 locallyDeletedEventIds.insert(event.eventId);
             }
 
             // Delete local events that were deleted remotely
             if (!remoteEventIds.contains(event.eventId)) {
-                qCDebug(lcNextcloud) << "Event deleted remotely:" << event.eventId << event.eventSubject << event.eventText;
+                qCDebug(lcNextcloud) << "Event deleted remotely:" << event.eventId
+                                     << event.eventSubject << event.eventText;
                 db.deleteEvent(event.accountId, event.eventId, &error);
                 if (error.errorCode != SyncCache::DatabaseError::NoError) {
                     transactionsSucceeded = false;
@@ -227,9 +232,11 @@ void Syncer::handleNotificationListReply()
         }
 
     } else if (transactionsSucceeded) {
-        emit finishWithError(QStringLiteral("Failed to commit Posts transaction: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to commit Posts transaction: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
     } else {
-        emit finishWithError(QStringLiteral("Failed to store Posts: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to store Posts: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
     }
 }
 
@@ -299,16 +306,19 @@ void Syncer::purgeAccount(int accountId)
     SyncCache::EventDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Posts/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Posts/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
-        emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
         return;
     }
 
     if (!db.beginTransaction(&error)) {
-        emit finishWithError(QStringLiteral("Failed to begin Posts transaction: %1: %2").arg(error.errorCode).arg(error.errorMessage));
+        emit finishWithError(QStringLiteral("Failed to begin Posts transaction: %1: %2")
+                             .arg(error.errorCode).arg(error.errorMessage));
         return;
     }
 

@@ -16,7 +16,8 @@ bool NetworkRequestGenerator::debugEnabled = false;
 const QByteArray NetworkRequestGenerator::XmlContentType = "application/xml; charset=utf-8";
 const QByteArray NetworkRequestGenerator::JsonContentType = "application/json";
 
-NetworkRequestGenerator::NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl, const QString &username, const QString &password)
+NetworkRequestGenerator::NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl,
+                                                 const QString &username, const QString &password)
     : m_username(username)
     , m_password(password)
     , m_serverUrl(serverUrl)
@@ -27,14 +28,16 @@ NetworkRequestGenerator::NetworkRequestGenerator(QNetworkAccessManager *networkA
     }
 }
 
-NetworkRequestGenerator::NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl, const QString &accessToken)
+NetworkRequestGenerator::NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl,
+                                                 const QString &accessToken)
     : m_accessToken(accessToken)
     , m_serverUrl(serverUrl)
     , m_networkAccessManager(networkAccessManager)
 {
 }
 
-QNetworkReply *NetworkRequestGenerator::sendRequest(const QNetworkRequest &request, const QByteArray &requestType, const QByteArray &requestData) const
+QNetworkReply *NetworkRequestGenerator::sendRequest(const QNetworkRequest &request, const QByteArray &requestType,
+                                                    const QByteArray &requestData) const
 {
     QBuffer *requestDataBuffer = nullptr;
     if (!requestData.isEmpty()) {
@@ -55,7 +58,8 @@ QNetworkReply *NetworkRequestGenerator::sendRequest(const QNetworkRequest &reque
     return reply;
 }
 
-QNetworkRequest NetworkRequestGenerator::networkRequest(const QString &path, const QString &contentType, const QByteArray &requestData) const
+QNetworkRequest NetworkRequestGenerator::networkRequest(const QString &path, const QString &contentType,
+                                                        const QByteArray &requestData) const
 {
     const bool isOcsRequest = path.startsWith(QStringLiteral("/ocs/"));
 
@@ -191,7 +195,8 @@ QNetworkReply *NetworkRequestGenerator::dirCreation(const QString &remoteDirPath
     return sendRequest(request, "MKCOL");
 }
 
-QNetworkReply *NetworkRequestGenerator::upload(const QString &dataContentType, const QByteArray &data, const QString &remoteDirPath)
+QNetworkReply *NetworkRequestGenerator::upload(const QString &dataContentType, const QByteArray &data,
+                                               const QString &remoteDirPath)
 {
     if (Q_UNLIKELY(remoteDirPath.isEmpty())) {
         qWarning() << "remotePath path empty, aborting";

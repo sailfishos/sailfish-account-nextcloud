@@ -86,6 +86,7 @@ NotificationGroupItem {
 
     Component {
         id: removeComponent
+
         RemoveAnimation {
             running: true
 
@@ -100,6 +101,7 @@ NotificationGroupItem {
 
     ListView {
         id: listView
+
         anchors.top: groupHeader.bottom
         width: parent.width
         height: Screen.height * 1000 // Ensures the view is fully populated without needing to bind height: contentHeight
@@ -160,6 +162,7 @@ NotificationGroupItem {
 
     BoundedModel {
         id: boundedModel
+
         model: eventModel
         maximumCount: !root.collapsed ? root._expansionMaximum : root._expansionThreshold
 

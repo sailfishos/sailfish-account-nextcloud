@@ -27,7 +27,10 @@ FullscreenContentPage {
         target: window
         property: "activeObject"
         property bool active: root.status === PageStatus.Active
-        value: { "url": active ? slideshowView.currentItem.source : "", "mimeType": active ? slideshowView.currentItem.mimeType : "" }
+        value: {
+            "url": active ? slideshowView.currentItem.source : "",
+            "mimeType": active ? slideshowView.currentItem.mimeType : ""
+        }
     }
 
     SlideshowView {
@@ -101,7 +104,6 @@ FullscreenContentPage {
     }
 
     IconButton {
-        id: detailsButton
         x: Theme.horizontalPageMargin
         y: Theme.paddingLarge
         icon.source: "image://theme/icon-m-about"

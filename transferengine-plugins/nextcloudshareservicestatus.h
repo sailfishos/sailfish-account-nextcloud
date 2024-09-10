@@ -19,8 +19,6 @@
 
 // libaccounts-qt5
 #include <Accounts/Manager>
-#include <SignOn/SessionData>
-#include <SignOn/Error>
 
 class NextcloudShareServiceStatus : public QObject
 {
@@ -58,7 +56,8 @@ Q_SIGNALS:
     void serviceError(const QString &message);
 
 private Q_SLOTS:
-    void signInResponseHandler(int accountId, const QString &serviceName, const AccountAuthenticatorCredentials &credentials);
+    void signInResponseHandler(int accountId, const QString &serviceName,
+                               const AccountAuthenticatorCredentials &credentials);
     void signInErrorHandler(int accountId, const QString &serviceName);
 
 private:

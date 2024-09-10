@@ -61,7 +61,8 @@ void WebDavSyncer::signInError(int accountId, const QString &serviceName, const 
 
 void WebDavSyncer::sync(int, const QString &, const AccountAuthenticatorCredentials &credentials)
 {
-    qCDebug(lcNextcloud) << Q_FUNC_INFO << "Auth succeeded, start sync for service" << m_serviceName << "with account" << m_accountId;
+    qCDebug(lcNextcloud) << Q_FUNC_INFO << "Auth succeeded, start sync for service" << m_serviceName
+                         << "with account" << m_accountId;
 
     const bool ignoreSslErrors = credentials.serviceSettings.value(QStringLiteral("ignore_ssl_errors")).toBool();
     const QString serverAddress = credentials.serviceSettings.value(QStringLiteral("server_address")).toString();
@@ -95,7 +96,8 @@ void WebDavSyncer::finishWithHttpError(const QString &errorMessage, int httpCode
 
 void WebDavSyncer::finishWithError(const QString &errorMessage)
 {
-    qCWarning(lcNextcloud) << "Nextcloud" << m_serviceName << "sync for account" << m_accountId << "finished with error:" << errorMessage;
+    qCWarning(lcNextcloud) << "Nextcloud" << m_serviceName << "sync for account" << m_accountId
+                           << "finished with error:" << errorMessage;
     m_syncError = true;
     cleanUp();
     emit syncFailed();
@@ -103,7 +105,8 @@ void WebDavSyncer::finishWithError(const QString &errorMessage)
 
 void WebDavSyncer::finishWithSuccess()
 {
-    qCDebug(lcNextcloud) << Q_FUNC_INFO << "Nextcloud" << m_serviceName << "sync with account" << m_accountId << "finished successfully!";
+    qCDebug(lcNextcloud) << Q_FUNC_INFO << "Nextcloud" << m_serviceName
+                         << "sync with account" << m_accountId << "finished successfully!";
     cleanUp();
     emit syncSucceeded();
 }

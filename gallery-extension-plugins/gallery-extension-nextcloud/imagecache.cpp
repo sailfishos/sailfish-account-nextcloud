@@ -39,7 +39,8 @@ void NextcloudImageCache::openDatabase(const QString &)
     });
 }
 
-void NextcloudImageCache::populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &)
+void NextcloudImageCache::populateUserThumbnail(int idempToken, int accountId, const QString &userId,
+                                                const QNetworkRequest &)
 {
     PendingRequest req;
     req.idempToken = idempToken;
@@ -49,7 +50,8 @@ void NextcloudImageCache::populateUserThumbnail(int idempToken, int accountId, c
     performRequest(req);
 }
 
-void NextcloudImageCache::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &)
+void NextcloudImageCache::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,
+                                                 const QString &albumId, const QNetworkRequest &)
 {
     PendingRequest req;
     req.idempToken = idempToken;
@@ -60,7 +62,9 @@ void NextcloudImageCache::populateAlbumThumbnail(int idempToken, int accountId, 
     performRequest(req);
 }
 
-void NextcloudImageCache::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &)
+void NextcloudImageCache::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId,
+                                                 const QString &albumId, const QString &photoId,
+                                                 const QNetworkRequest &)
 {
     PendingRequest req;
     req.idempToken = idempToken;
@@ -72,7 +76,8 @@ void NextcloudImageCache::populatePhotoThumbnail(int idempToken, int accountId, 
     performRequest(req);
 }
 
-void NextcloudImageCache::populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &)
+void NextcloudImageCache::populatePhotoImage(int idempToken, int accountId, const QString &userId,
+                                             const QString &albumId, const QString &photoId, const QNetworkRequest &)
 {
     PendingRequest req;
     req.idempToken = idempToken;
@@ -147,9 +152,11 @@ QNetworkRequest NextcloudImageCache::templateRequest(int accountId, bool require
     QNetworkRequest templateRequest(templateUrl);
     if (m_accountIdAccessTokens.contains(accountId)) {
         templateRequest.setRawHeader(QString(QLatin1String("Authorization")).toUtf8(),
-                                     QString(QLatin1String("Bearer ")).toUtf8() + m_accountIdAccessTokens.value(accountId).toUtf8());
+                                     QString(QLatin1String("Bearer ")).toUtf8()
+                                     + m_accountIdAccessTokens.value(accountId).toUtf8());
     } else if (requiresBasicAuth) {
-        const QByteArray credentials((m_accountIdCredentials.value(accountId).first + ':' + m_accountIdCredentials.value(accountId).second).toUtf8());
+        const QByteArray credentials((m_accountIdCredentials.value(accountId).first + ':'
+                                      + m_accountIdCredentials.value(accountId).second).toUtf8());
         templateRequest.setRawHeader("Authorization", QByteArray("Basic ") + credentials.toBase64());
     }
     return templateRequest;
