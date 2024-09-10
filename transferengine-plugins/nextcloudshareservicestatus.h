@@ -19,8 +19,6 @@
 
 // libaccounts-qt5
 #include <Accounts/Manager>
-#include <SignOn/SessionData>
-#include <SignOn/Error>
 
 class NextcloudShareServiceStatus : public QObject
 {
