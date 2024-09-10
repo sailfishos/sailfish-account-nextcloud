@@ -6,8 +6,8 @@ MODULENAME = com/jolla/eventsview/nextcloud
 TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
 QT += qml
-CONFIG += plugin link_pkgconfig c++11
-PKGCONFIG += libsignon-qt5 accounts-qt5 libsailfishkeyprovider mlite5 sailfishaccounts
+CONFIG += plugin link_pkgconfig
+PKGCONFIG += accounts-qt5 libsailfishkeyprovider mlite5 sailfishaccounts
 
 include($$PWD/../../common/common.pri)
 
