@@ -81,7 +81,8 @@ Page {
                     clip: thumbDownloader.status === NextcloudImageDownloader.Ready
                     fillMode: Image.PreserveAspectCrop
                     highlighted: thumbDownloader.status !== NextcloudImageDownloader.Ready && photoDelegate.highlighted
-                    opacity: thumbDownloader.status === NextcloudImageDownloader.Ready && photoDelegate.highlighted ? Theme.opacityHigh : 1
+                    opacity: thumbDownloader.status === NextcloudImageDownloader.Ready && photoDelegate.highlighted
+                             ? Theme.opacityHigh : 1
                 }
             }
 

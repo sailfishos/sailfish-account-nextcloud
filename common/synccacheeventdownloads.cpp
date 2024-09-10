@@ -122,7 +122,8 @@ void EventImageDownloader::triggerDownload()
             connect(reply, &QNetworkReply::finished, this, [this, reply, download] {
                 if (reply->error() != QNetworkReply::NoError) {
                     if (download->m_watcher) {
-                        emit download->m_watcher->downloadFailed(QStringLiteral("Event Image download error: %1").arg(reply->error()));
+                        emit download->m_watcher->downloadFailed(QStringLiteral("Event Image download error: %1")
+                                                                 .arg(reply->error()));
                     }
                 } else {
                     // save the file to the appropriate location.

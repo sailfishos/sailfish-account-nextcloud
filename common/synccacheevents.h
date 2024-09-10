@@ -44,7 +44,8 @@ class EventDatabase : public Database
 public:
     EventDatabase(QObject *parent = nullptr);
 
-    QVector<SyncCache::Event> events(int accountId, SyncCache::DatabaseError *error, bool includeLocallyDeleted = true) const;
+    QVector<SyncCache::Event> events(int accountId, SyncCache::DatabaseError *error,
+                                     bool includeLocallyDeleted = true) const;
     SyncCache::Event event(int accountId, const QString &eventId, SyncCache::DatabaseError *error) const;
     void storeEvent(const SyncCache::Event &event, SyncCache::DatabaseError *error);
     void deleteEvent(int accountId, const QString &eventId, SyncCache::DatabaseError *error);
@@ -75,7 +76,8 @@ public Q_SLOTS:
     virtual void deleteEvent(int accountId, const QString &eventId);
     virtual void flagEventForDeletion(int accountId, const QString &eventId);
 
-    virtual void populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &requestTemplate);
+    virtual void populateEventImage(int idempToken, int accountId, const QString &eventId,
+                                    const QNetworkRequest &requestTemplate);
 
 Q_SIGNALS:
     void openDatabaseFailed(const QString &errorMessage);

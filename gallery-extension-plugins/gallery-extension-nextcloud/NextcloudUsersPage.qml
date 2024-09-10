@@ -14,6 +14,7 @@ import com.jolla.gallery.nextcloud 1.0
 
 Page {
     id: root
+
     allowedOrientations: window.allowedOrientations
 
     property alias model: view.model
@@ -21,6 +22,7 @@ Page {
 
     SilicaListView {
         id: view
+
         anchors.fill: parent
         header: PageHeader { title: root.title }
 

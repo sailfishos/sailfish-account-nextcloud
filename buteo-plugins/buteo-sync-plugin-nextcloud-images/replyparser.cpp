@@ -55,7 +55,8 @@ ReplyParser::GalleryMetadata ReplyParser::galleryMetadataFromResources(Syncer *i
         } else {
             albumId = resource.href.mid(0, resource.href.lastIndexOf('/') + 1);
         }
-        const QString albumName = removeEdgeDirSeparators(albumId.mid(normalizedRootPath.length()));  // relative path; empty if albumId is root directory
+        // relative path; empty if albumId is root directory
+        const QString albumName = removeEdgeDirSeparators(albumId.mid(normalizedRootPath.length()));
         const bool isQueriedAlbum = (resource.isCollection && normalizedQueriedAlbumPath == albumId);
 
         // Examples:

@@ -35,7 +35,8 @@ public Q_SLOTS:
     void deleteEvent(int accountId, const QString &eventId);
     void flagEventForDeletion(int accountId, const QString &eventId);
 
-    void populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &requestTemplate);
+    void populateEventImage(int idempToken, int accountId, const QString &eventId,
+                            const QNetworkRequest &requestTemplate);
 
 Q_SIGNALS:
     void openDatabaseFailed(const QString &errorMessage);
@@ -76,7 +77,8 @@ Q_SIGNALS:
     void deleteEvent(int accountId, const QString &eventId);
     void flagEventForDeletion(int accountId, const QString &eventId);
 
-    bool populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &requestTemplate);
+    bool populateEventImage(int idempToken, int accountId, const QString &eventId,
+                            const QNetworkRequest &requestTemplate);
 
 private:
     QThread m_dbThread;

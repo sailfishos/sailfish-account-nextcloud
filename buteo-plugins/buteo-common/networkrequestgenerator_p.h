@@ -18,8 +18,10 @@
 class NetworkRequestGenerator
 {
 public:
-    NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl, const QString &username, const QString &password);
-    NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl, const QString &accessToken);
+    NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl,
+                            const QString &username, const QString &password);
+    NetworkRequestGenerator(QNetworkAccessManager *networkAccessManager, const QString &serverUrl,
+                            const QString &accessToken);
 
     QNetworkReply *userInfo(const QByteArray &acceptContentType);
     QNetworkReply *capabilities(const QByteArray &acceptContentType);
@@ -43,7 +45,8 @@ private:
                                    const QString &contentType = QString(),
                                    const QByteArray &requestData = QByteArray()) const;
     QUrl networkRequestUrl(const QString &path);
-    QNetworkReply *sendRequest(const QNetworkRequest &request, const QByteArray &requestType, const QByteArray &requestData = QByteArray()) const;
+    QNetworkReply *sendRequest(const QNetworkRequest &request, const QByteArray &requestType,
+                               const QByteArray &requestData = QByteArray()) const;
 
     QString m_username;
     QString m_password;

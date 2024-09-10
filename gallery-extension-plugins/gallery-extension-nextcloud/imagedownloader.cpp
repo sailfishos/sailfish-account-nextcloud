@@ -208,7 +208,8 @@ void NextcloudImageDownloader::loadImage()
             connect(m_imageCache, &SyncCache::ImageCache::populatePhotoImageFailed,
                     this, &NextcloudImageDownloader::populateFailed,
                     Qt::UniqueConnection);
-            m_imageCache->populatePhotoImage(m_idempToken, m_accountId, m_userId, m_albumId, m_photoId, QNetworkRequest());
+            m_imageCache->populatePhotoImage(m_idempToken, m_accountId, m_userId, m_albumId, m_photoId,
+                                             QNetworkRequest());
 
         } else if (m_downloadThumbnail) {
             if (m_photoId.isEmpty()) {
@@ -229,7 +230,8 @@ void NextcloudImageDownloader::loadImage()
                 connect(m_imageCache, &SyncCache::ImageCache::populatePhotoThumbnailFailed,
                         this, &NextcloudImageDownloader::populateFailed,
                         Qt::UniqueConnection);
-                m_imageCache->populatePhotoThumbnail(m_idempToken, m_accountId, m_userId, m_albumId, m_photoId, networkRequest);
+                m_imageCache->populatePhotoThumbnail(m_idempToken, m_accountId, m_userId, m_albumId, m_photoId,
+                                                     networkRequest);
             }
         }
     } else {

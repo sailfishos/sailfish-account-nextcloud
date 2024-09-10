@@ -24,7 +24,8 @@ NextcloudShareServiceStatus::NextcloudShareServiceStatus(QObject *parent)
             this, &NextcloudShareServiceStatus::signInErrorHandler);
 }
 
-void NextcloudShareServiceStatus::signInResponseHandler(int accountId, const QString &, const AccountAuthenticatorCredentials &credentials)
+void NextcloudShareServiceStatus::signInResponseHandler(int accountId, const QString &,
+                                                        const AccountAuthenticatorCredentials &credentials)
 {
     if (!m_accountIdToDetailsIdx.contains(accountId)) {
         return;

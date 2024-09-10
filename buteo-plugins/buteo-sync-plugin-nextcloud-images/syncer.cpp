@@ -57,7 +57,8 @@ void Syncer::purgeDeletedAccounts()
     SyncCache::ImageDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Images/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Images/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
@@ -75,7 +76,8 @@ void Syncer::purgeDeletedAccounts()
 
     if (usersToDelete.count() > 0) {
         if (!db.beginTransaction(&error)) {
-            qCWarning(lcNextcloud) << Q_FUNC_INFO << "failed to begin transaction:" << error.errorCode << error.errorMessage;
+            qCWarning(lcNextcloud) << Q_FUNC_INFO
+                                   << "failed to begin transaction:" << error.errorCode << error.errorMessage;
             return;
         }
 
@@ -93,7 +95,8 @@ void Syncer::purgeDeletedAccounts()
         if (error.errorCode != SyncCache::DatabaseError::NoError) {
             db.rollbackTransaction(&error);
         } else if (!db.commitTransaction(&error)) {
-            qCWarning(lcNextcloud) << Q_FUNC_INFO << "failed to commit transaction:" << error.errorCode << error.errorMessage;
+            qCWarning(lcNextcloud) << Q_FUNC_INFO
+                                   << "failed to commit transaction:" << error.errorCode << error.errorMessage;
         }
     }
 }
@@ -133,7 +136,8 @@ void Syncer::handleUserInfoReply()
     SyncCache::ImageDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Images/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Images/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
         qCWarning(lcNextcloud) << "Failed to open database to store user for account:" << m_accountId
@@ -232,7 +236,8 @@ bool Syncer::processQueriedAlbum(const SyncCache::Album &queriedAlbum,
     SyncCache::ImageDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Images/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Images/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
@@ -300,7 +305,8 @@ bool Syncer::processQueriedAlbum(const SyncCache::Album &queriedAlbum,
                   << m_syncProgressInfo.addedPhotoCount
                   << "/" << m_syncProgressInfo.modifiedPhotoCount
                   << "/" << m_syncProgressInfo.removedPhotoCount;
-        qCDebug(lcNextcloud) << Q_FUNC_INFO << "Nextcloud images sync with account" << m_accountId << "finished successfully!";
+        qCDebug(lcNextcloud) << Q_FUNC_INFO
+                             << "Nextcloud images sync with account" << m_accountId << "finished successfully!";
 
         // Sync was successful. Next time, can do incremental sync based on known etags instead
         // of doing a complete sync of the full remote directory tree.
@@ -427,7 +433,8 @@ void Syncer::purgeAccount(int accountId)
     SyncCache::ImageDatabase db;
     SyncCache::DatabaseError error;
     db.openDatabase(
-            QStringLiteral("%1/system/privileged/Images/nextcloud.db").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            QStringLiteral("%1/system/privileged/Images/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
             &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {

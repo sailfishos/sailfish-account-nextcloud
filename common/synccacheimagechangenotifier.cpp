@@ -80,7 +80,8 @@ void SyncCache::ImageChangeNotifier::dataChanged()
     QDBusConnection::sessionBus().send(message);
 }
 
-bool SyncCache::ImageChangeNotifier::connectNotification(const char *name, const char *signature, QObject *receiver, const char *slot)
+bool SyncCache::ImageChangeNotifier::connectNotification(const char *name, const char *signature,
+                                                         QObject *receiver, const char *slot)
 {
     static QDBusConnection connection(QDBusConnection::sessionBus());
 

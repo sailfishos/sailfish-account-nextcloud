@@ -22,8 +22,10 @@ NextcloudPluginInfo::NextcloudPluginInfo()
                    << QLatin1String("text/xml")
                    << QLatin1String("text/plain");
 
-    connect(m_nextcloudShareServiceStatus, &NextcloudShareServiceStatus::serviceReady, this, &NextcloudPluginInfo::serviceReady);
-    connect(m_nextcloudShareServiceStatus, &NextcloudShareServiceStatus::serviceError, this, &NextcloudPluginInfo::infoError);
+    connect(m_nextcloudShareServiceStatus, &NextcloudShareServiceStatus::serviceReady,
+            this, &NextcloudPluginInfo::serviceReady);
+    connect(m_nextcloudShareServiceStatus, &NextcloudShareServiceStatus::serviceError,
+            this, &NextcloudPluginInfo::infoError);
 }
 
 NextcloudPluginInfo::~NextcloudPluginInfo()

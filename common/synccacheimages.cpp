@@ -179,7 +179,8 @@ void ImageCacheThreadWorker::requestPhotoCount(int accountId, const QString &use
     }
 }
 
-void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &requestTemplate)
+void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId, const QString &userId,
+                                                   const QNetworkRequest &requestTemplate)
 {
     Q_UNUSED(requestTemplate)
 
@@ -204,7 +205,8 @@ void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId
     emit populateUserThumbnailFinished(idempToken, QString());
 }
 
-void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &requestTemplate)
+void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,
+                                                    const QString &albumId, const QNetworkRequest &requestTemplate)
 {
     Q_UNUSED(requestTemplate)
 
@@ -248,7 +250,9 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
     emit populateAlbumThumbnailFinished(idempToken, QString());
 }
 
-void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate)
+void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId,
+                                                    const QString &albumId, const QString &photoId,
+                                                    const QNetworkRequest &requestTemplate)
 {
     Q_UNUSED(requestTemplate)
 
@@ -279,7 +283,8 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
     emit populatePhotoThumbnailFinished(idempToken, QString());
 }
 
-void ImageCacheThreadWorker::photoThumbnailDownloadFinished(int idempToken, const SyncCache::Photo &photo, const QUrl &filePath)
+void ImageCacheThreadWorker::photoThumbnailDownloadFinished(int idempToken, const SyncCache::Photo &photo,
+                                                            const QUrl &filePath)
 {
     DatabaseError storeError;
     Photo photoToStore = photo;
@@ -294,12 +299,14 @@ void ImageCacheThreadWorker::photoThumbnailDownloadFinished(int idempToken, cons
     }
 }
 
-void ImageCacheThreadWorker::populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate)
+void ImageCacheThreadWorker::populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                                const QString &photoId, const QNetworkRequest &requestTemplate)
 {
     DatabaseError error;
     Photo photo = m_db.photo(accountId, userId, albumId, photoId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populatePhotoImageFailed(idempToken, QStringLiteral("Error occurred while reading photo info from db: %1").arg(error.errorMessage));
+        emit populatePhotoImageFailed(idempToken, QStringLiteral("Error occurred while reading photo info from db: %1")
+                                      .arg(error.errorMessage));
         return;
     }
 
@@ -327,12 +334,14 @@ void ImageCacheThreadWorker::populatePhotoImage(int idempToken, int accountId, c
                 SyncCache::albumImageDownloadDir(accountId, photo.albumPath, false),
                 requestTemplate);
 
-    connect(watcher, &ImageDownloadWatcher::downloadFailed, this, [this, watcher, idempToken] (const QString &errorMessage) {
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
         emit populatePhotoImageFailed(idempToken, errorMessage);
         watcher->deleteLater();
     });
 
-    connect(watcher, &ImageDownloadWatcher::downloadFinished, this, [this, watcher, photo, idempToken, accountId] (const QUrl &filePath) {
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, photo, idempToken, accountId] (const QUrl &filePath) {
         // the file has been downloaded to disk.  attempt to update the database.
         DatabaseError storeError;
         Photo photoToStore = photo;
@@ -396,32 +405,56 @@ ImageCachePrivate::ImageCachePrivate(ImageCache *parent)
     connect(this, &ImageCachePrivate::requestPhotos, m_worker, &ImageCacheThreadWorker::requestPhotos);
     connect(this, &ImageCachePrivate::requestPhotoCount, m_worker, &ImageCacheThreadWorker::requestPhotoCount);
 
-    connect(this, &ImageCachePrivate::populateUserThumbnail, m_worker, &ImageCacheThreadWorker::populateUserThumbnail);
-    connect(this, &ImageCachePrivate::populateAlbumThumbnail, m_worker, &ImageCacheThreadWorker::populateAlbumThumbnail);
-    connect(this, &ImageCachePrivate::populatePhotoThumbnail, m_worker, &ImageCacheThreadWorker::populatePhotoThumbnail);
-    connect(this, &ImageCachePrivate::populatePhotoImage, m_worker, &ImageCacheThreadWorker::populatePhotoImage);
+    connect(this, &ImageCachePrivate::populateUserThumbnail,
+            m_worker, &ImageCacheThreadWorker::populateUserThumbnail);
+    connect(this, &ImageCachePrivate::populateAlbumThumbnail,
+            m_worker, &ImageCacheThreadWorker::populateAlbumThumbnail);
+    connect(this, &ImageCachePrivate::populatePhotoThumbnail,
+            m_worker, &ImageCacheThreadWorker::populatePhotoThumbnail);
+    connect(this, &ImageCachePrivate::populatePhotoImage,
+            m_worker, &ImageCacheThreadWorker::populatePhotoImage);
 
-    connect(m_worker, &ImageCacheThreadWorker::openDatabaseFailed, parent, &ImageCache::openDatabaseFailed);
-    connect(m_worker, &ImageCacheThreadWorker::openDatabaseFinished, parent, &ImageCache::openDatabaseFinished);
-    connect(m_worker, &ImageCacheThreadWorker::requestUserFailed, parent, &ImageCache::requestUserFailed);
-    connect(m_worker, &ImageCacheThreadWorker::requestUserFinished, parent, &ImageCache::requestUserFinished);
-    connect(m_worker, &ImageCacheThreadWorker::requestUsersFailed, parent, &ImageCache::requestUsersFailed);
-    connect(m_worker, &ImageCacheThreadWorker::requestUsersFinished, parent, &ImageCache::requestUsersFinished);
-    connect(m_worker, &ImageCacheThreadWorker::requestAlbumsFailed, parent, &ImageCache::requestAlbumsFailed);
-    connect(m_worker, &ImageCacheThreadWorker::requestAlbumsFinished, parent, &ImageCache::requestAlbumsFinished);
-    connect(m_worker, &ImageCacheThreadWorker::requestPhotosFailed, parent, &ImageCache::requestPhotosFailed);
-    connect(m_worker, &ImageCacheThreadWorker::requestPhotosFinished, parent, &ImageCache::requestPhotosFinished);
-    connect(m_worker, &ImageCacheThreadWorker::requestPhotoCountFailed, parent, &ImageCache::requestPhotoCountFailed);
-    connect(m_worker, &ImageCacheThreadWorker::requestPhotoCountFinished, parent, &ImageCache::requestPhotoCountFinished);
+    connect(m_worker, &ImageCacheThreadWorker::openDatabaseFailed,
+            parent, &ImageCache::openDatabaseFailed);
+    connect(m_worker, &ImageCacheThreadWorker::openDatabaseFinished,
+            parent, &ImageCache::openDatabaseFinished);
+    connect(m_worker, &ImageCacheThreadWorker::requestUserFailed,
+            parent, &ImageCache::requestUserFailed);
+    connect(m_worker, &ImageCacheThreadWorker::requestUserFinished,
+            parent, &ImageCache::requestUserFinished);
+    connect(m_worker, &ImageCacheThreadWorker::requestUsersFailed,
+            parent, &ImageCache::requestUsersFailed);
+    connect(m_worker, &ImageCacheThreadWorker::requestUsersFinished,
+            parent, &ImageCache::requestUsersFinished);
+    connect(m_worker, &ImageCacheThreadWorker::requestAlbumsFailed,
+            parent, &ImageCache::requestAlbumsFailed);
+    connect(m_worker, &ImageCacheThreadWorker::requestAlbumsFinished,
+            parent, &ImageCache::requestAlbumsFinished);
+    connect(m_worker, &ImageCacheThreadWorker::requestPhotosFailed,
+            parent, &ImageCache::requestPhotosFailed);
+    connect(m_worker, &ImageCacheThreadWorker::requestPhotosFinished,
+            parent, &ImageCache::requestPhotosFinished);
+    connect(m_worker, &ImageCacheThreadWorker::requestPhotoCountFailed,
+            parent, &ImageCache::requestPhotoCountFailed);
+    connect(m_worker, &ImageCacheThreadWorker::requestPhotoCountFinished,
+            parent, &ImageCache::requestPhotoCountFinished);
 
-    connect(m_worker, &ImageCacheThreadWorker::populateUserThumbnailFailed, parent, &ImageCache::populateUserThumbnailFailed);
-    connect(m_worker, &ImageCacheThreadWorker::populateUserThumbnailFinished, parent, &ImageCache::populateUserThumbnailFinished);
-    connect(m_worker, &ImageCacheThreadWorker::populateAlbumThumbnailFailed, parent, &ImageCache::populateAlbumThumbnailFailed);
-    connect(m_worker, &ImageCacheThreadWorker::populateAlbumThumbnailFinished, parent, &ImageCache::populateAlbumThumbnailFinished);
-    connect(m_worker, &ImageCacheThreadWorker::populatePhotoThumbnailFailed, parent, &ImageCache::populatePhotoThumbnailFailed);
-    connect(m_worker, &ImageCacheThreadWorker::populatePhotoThumbnailFinished, parent, &ImageCache::populatePhotoThumbnailFinished);
-    connect(m_worker, &ImageCacheThreadWorker::populatePhotoImageFailed, parent, &ImageCache::populatePhotoImageFailed);
-    connect(m_worker, &ImageCacheThreadWorker::populatePhotoImageFinished, parent, &ImageCache::populatePhotoImageFinished);
+    connect(m_worker, &ImageCacheThreadWorker::populateUserThumbnailFailed,
+            parent, &ImageCache::populateUserThumbnailFailed);
+    connect(m_worker, &ImageCacheThreadWorker::populateUserThumbnailFinished,
+            parent, &ImageCache::populateUserThumbnailFinished);
+    connect(m_worker, &ImageCacheThreadWorker::populateAlbumThumbnailFailed,
+            parent, &ImageCache::populateAlbumThumbnailFailed);
+    connect(m_worker, &ImageCacheThreadWorker::populateAlbumThumbnailFinished,
+            parent, &ImageCache::populateAlbumThumbnailFinished);
+    connect(m_worker, &ImageCacheThreadWorker::populatePhotoThumbnailFailed,
+            parent, &ImageCache::populatePhotoThumbnailFailed);
+    connect(m_worker, &ImageCacheThreadWorker::populatePhotoThumbnailFinished,
+            parent, &ImageCache::populatePhotoThumbnailFinished);
+    connect(m_worker, &ImageCacheThreadWorker::populatePhotoImageFailed,
+            parent, &ImageCache::populatePhotoImageFailed);
+    connect(m_worker, &ImageCacheThreadWorker::populatePhotoImageFinished,
+            parent, &ImageCache::populatePhotoImageFinished);
 
     connect(m_worker, &ImageCacheThreadWorker::usersStored, parent, &ImageCache::usersStored);
     connect(m_worker, &ImageCacheThreadWorker::albumsStored, parent, &ImageCache::albumsStored);
@@ -459,7 +492,8 @@ QString ImageCache::imageCacheDir(int accountId)
 
 QString ImageCache::imageCacheRootDir()
 {
-    return QStringLiteral("%1/system/privileged/Images").arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
+    return QStringLiteral("%1/system/privileged/Images")
+            .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
 }
 
 void ImageCache::openDatabase(const QString &databaseFile)
@@ -498,25 +532,29 @@ void ImageCache::requestPhotoCount(int accountId, const QString &userId)
     emit d->requestPhotoCount(accountId, userId);
 }
 
-void ImageCache::populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &requestTemplate)
+void ImageCache::populateUserThumbnail(int idempToken, int accountId, const QString &userId,
+                                       const QNetworkRequest &requestTemplate)
 {
     Q_D(ImageCache);
     emit d->populateUserThumbnail(idempToken, accountId, userId, requestTemplate);
 }
 
-void ImageCache::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &requestTemplate)
+void ImageCache::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,
+                                        const QString &albumId, const QNetworkRequest &requestTemplate)
 {
     Q_D(ImageCache);
     emit d->populateAlbumThumbnail(idempToken, accountId, userId, albumId, requestTemplate);
 }
 
-void ImageCache::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate)
+void ImageCache::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                        const QString &photoId, const QNetworkRequest &requestTemplate)
 {
     Q_D(ImageCache);
     emit d->populatePhotoThumbnail(idempToken, accountId, userId, albumId, photoId, requestTemplate);
 }
 
-void ImageCache::populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate)
+void ImageCache::populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                    const QString &photoId, const QNetworkRequest &requestTemplate)
 {
     Q_D(ImageCache);
     emit d->populatePhotoImage(idempToken, accountId, userId, albumId, photoId, requestTemplate);

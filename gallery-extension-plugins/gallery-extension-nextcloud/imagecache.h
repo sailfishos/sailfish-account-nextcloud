@@ -28,9 +28,12 @@ public:
 
     void openDatabase(const QString &) override;
     void populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &) override;
-    void populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &) override;
-    void populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &) override;
-    void populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &) override;
+    void populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QNetworkRequest &) override;
+    void populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QString &photoId, const QNetworkRequest &) override;
+    void populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                            const QString &photoId, const QNetworkRequest &) override;
 
     enum PendingRequestType {
         PopulateUserThumbnailType,

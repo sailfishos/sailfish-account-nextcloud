@@ -39,7 +39,8 @@ void NextcloudEventCache::openDatabase(const QString &)
     });
 }
 
-void NextcloudEventCache::populateEventImage(int idempToken, int accountId, const QString &eventId, const QNetworkRequest &)
+void NextcloudEventCache::populateEventImage(int idempToken, int accountId, const QString &eventId,
+                                             const QNetworkRequest &)
 {
     PendingRequest req;
     req.idempToken = idempToken;
@@ -97,7 +98,8 @@ QNetworkRequest NextcloudEventCache::templateRequest(int accountId) const
     QNetworkRequest templateRequest(templateUrl);
     if (m_accountIdAccessTokens.contains(accountId)) {
         templateRequest.setRawHeader(QString(QLatin1String("Authorization")).toUtf8(),
-                                     QString(QLatin1String("Bearer ")).toUtf8() + m_accountIdAccessTokens.value(accountId).toUtf8());
+                                     QString(QLatin1String("Bearer ")).toUtf8()
+                                     + m_accountIdAccessTokens.value(accountId).toUtf8());
     }
     return templateRequest;
 }

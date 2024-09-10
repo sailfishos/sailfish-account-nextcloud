@@ -154,7 +154,8 @@ void ImageDownloader::triggerDownload()
         if (reply) {
             connect(reply, &QNetworkReply::finished, this, [this, reply, download] {
                 if (reply->error() != QNetworkReply::NoError) {
-                    download->setStatus(ImageDownload::Error, QStringLiteral("Image download error: %1").arg(reply->errorString()));
+                    download->setStatus(ImageDownload::Error,
+                                        QStringLiteral("Image download error: %1").arg(reply->errorString()));
                 } else {
                     // save the file to the appropriate location.
                     const QByteArray replyData = reply->readAll();

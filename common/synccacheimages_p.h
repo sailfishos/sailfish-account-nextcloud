@@ -40,10 +40,14 @@ public Q_SLOTS:
     void requestPhotos(int accountId, const QString &userId, const QString &albumId);
     void requestPhotoCount(int accountId, const QString &userId);
 
-    void populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &requestTemplate);
-    void populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &requestTemplate);
-    void populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate);
-    void populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate);
+    void populateUserThumbnail(int idempToken, int accountId, const QString &userId,
+                               const QNetworkRequest &requestTemplate);
+    void populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QNetworkRequest &requestTemplate);
+    void populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QString &photoId, const QNetworkRequest &requestTemplate);
+    void populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                            const QString &photoId, const QNetworkRequest &requestTemplate);
 
 Q_SIGNALS:
     void openDatabaseFailed(const QString &errorMessage);
@@ -58,8 +62,10 @@ Q_SIGNALS:
     void requestAlbumsFailed(int accountId, const QString &userId, const QString &errorMessage);
     void requestAlbumsFinished(int accountId, const QString &userId, const QVector<SyncCache::Album> &albums);
 
-    void requestPhotosFailed(int accountId, const QString &userId, const QString &albumId, const QString &errorMessage);
-    void requestPhotosFinished(int accountId, const QString &userId, const QString &albumId, const QVector<SyncCache::Photo> &photos);
+    void requestPhotosFailed(int accountId, const QString &userId, const QString &albumId,
+                             const QString &errorMessage);
+    void requestPhotosFinished(int accountId, const QString &userId, const QString &albumId,
+                               const QVector<SyncCache::Photo> &photos);
 
     void requestPhotoCountFailed(int accountId, const QString &userId, const QString &errorMessage);
     void requestPhotoCountFinished(int accountId, const QString &userId, int photoCount);
@@ -110,10 +116,14 @@ Q_SIGNALS:
     void requestPhotos(int accountId, const QString &userId, const QString &albumId);
     void requestPhotoCount(int accountId, const QString &userId);
 
-    bool populateUserThumbnail(int idempToken, int accountId, const QString &userId, const QNetworkRequest &requestTemplate);
-    bool populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QNetworkRequest &requestTemplate);
-    bool populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate);
-    bool populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId, const QString &photoId, const QNetworkRequest &requestTemplate);
+    bool populateUserThumbnail(int idempToken, int accountId, const QString &userId,
+                               const QNetworkRequest &requestTemplate);
+    bool populateAlbumThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QNetworkRequest &requestTemplate);
+    bool populatePhotoThumbnail(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                                const QString &photoId, const QNetworkRequest &requestTemplate);
+    bool populatePhotoImage(int idempToken, int accountId, const QString &userId, const QString &albumId,
+                            const QString &photoId, const QNetworkRequest &requestTemplate);
 
 private:
     QThread m_dbThread;

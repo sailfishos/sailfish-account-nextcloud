@@ -56,7 +56,8 @@ Q_SIGNALS:
     void serviceError(const QString &message);
 
 private Q_SLOTS:
-    void signInResponseHandler(int accountId, const QString &serviceName, const AccountAuthenticatorCredentials &credentials);
+    void signInResponseHandler(int accountId, const QString &serviceName,
+                               const AccountAuthenticatorCredentials &credentials);
     void signInErrorHandler(int accountId, const QString &serviceName);
 
 private:
