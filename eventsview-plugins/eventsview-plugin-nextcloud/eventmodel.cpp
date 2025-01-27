@@ -18,7 +18,7 @@
 #include <QtDBus/QDBusPendingReply>
 
 // mlite5
-#include <MGConfItem>
+#include <MDConfItem>
 
 NextcloudEventModel::NextcloudEventModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -216,8 +216,8 @@ void NextcloudEventModel::loadData()
     }
 
     if (!m_notifCapabilityConf) {
-        m_notifCapabilityConf = new MGConfItem("/sailfish/sync/profiles/" + m_buteoProfileId + "/ocs-endpoints", this);
-        connect(m_notifCapabilityConf, &MGConfItem::valueChanged,
+        m_notifCapabilityConf = new MDConfItem("/sailfish/sync/profiles/" + m_buteoProfileId + "/ocs-endpoints", this);
+        connect(m_notifCapabilityConf, &MDConfItem::valueChanged,
                 this, &NextcloudEventModel::updateSupportedActions);
     }
     updateSupportedActions();

@@ -35,7 +35,8 @@
 
 Syncer::Syncer(QObject *parent, Buteo::SyncProfile *syncProfile, Syncer::Operation operation)
     : WebDavSyncer(parent, syncProfile, QStringLiteral("nextcloud-backup"))
-    , m_sailfishBackup(new QDBusInterface("org.sailfishos.backup", "/sailfishbackup", "org.sailfishos.backup", QDBusConnection::sessionBus(), this))
+    , m_sailfishBackup(new QDBusInterface("org.sailfishos.backup", "/sailfishbackup", "org.sailfishos.backup",
+                                          QDBusConnection::sessionBus(), this))
     , m_operation(operation)
 {
     m_sailfishBackup->connection().connect(

@@ -23,7 +23,7 @@
 #include <QtCore/QStandardPaths>
 
 // mlite5
-#include <MGConfItem>
+#include <MDConfItem>
 
 // buteo
 #include <SyncProfile.h>
@@ -84,7 +84,7 @@ void Syncer::handleCapabilitiesReply()
     const QStringList ocsEndPointsList = capabilityMap.value(NotificationsEndpointsKey).toStringList();
     m_deleteAllNotifsSupported = ocsEndPointsList.contains(QStringLiteral("delete-all"));
 
-    MGConfItem capabilityConf("/sailfish/sync/profiles/" + m_syncProfile->name() + "/" + NotificationsEndpointsKey);
+    MDConfItem capabilityConf("/sailfish/sync/profiles/" + m_syncProfile->name() + "/" + NotificationsEndpointsKey);
     if (capabilityConf.value() != ocsEndPointsList) {
         capabilityConf.set(ocsEndPointsList);
     }

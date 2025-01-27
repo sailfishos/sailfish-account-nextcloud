@@ -21,7 +21,7 @@
 #include <QtQml/QQmlParserStatus>
 
 class QTimer;
-class MGConfItem;
+class MDConfItem;
 class QDBusInterface;
 
 class NextcloudEventModel : public QAbstractListModel, public QQmlParserStatus
@@ -105,7 +105,7 @@ private:
     QTimer *m_notificationDeleteTimer = nullptr;
     QSet<QString> m_notificationsToDelete;
 
-    MGConfItem *m_notifCapabilityConf = nullptr;
+    MDConfItem *m_notifCapabilityConf = nullptr;
     QDBusInterface *m_buteoInterface = nullptr;
     QString m_buteoProfileId;
 };
