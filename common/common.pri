@@ -1,4 +1,3 @@
-QMAKE_CXXFLAGS = -Wall -Werror
 INCLUDEPATH += $$PWD
 DEPENDPATH += .
 

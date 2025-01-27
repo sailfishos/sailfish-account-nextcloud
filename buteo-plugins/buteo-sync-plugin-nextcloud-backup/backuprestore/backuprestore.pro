@@ -14,8 +14,6 @@ OTHER_FILES += \
     $$PWD/nextcloud-backuprestore.xml \
     $$PWD/nextcloud.BackupRestore.xml
 
-QMAKE_CXXFLAGS = -Wall -Werror
-
 TEMPLATE = lib
 CONFIG += plugin
 target.path = $$[QT_INSTALL_LIBS]/buteo-plugins-qt5/oopp

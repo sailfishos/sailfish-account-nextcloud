@@ -3,8 +3,6 @@ TEMPLATE = lib
 QT -= gui
 QT += network dbus sql
 
-QMAKE_CXXFLAGS = -Wall -Werror
-
 TARGET = nextcloudcommon
 TARGET = $$qtLibraryTarget($$TARGET)
 
