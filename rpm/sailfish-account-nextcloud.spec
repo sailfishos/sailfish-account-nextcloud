@@ -1,5 +1,10 @@
+# SPDX-FileCopyrightText: 2019 - 2023 Jolla Ltd.
+# SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 Name: sailfish-account-nextcloud
-License: Proprietary
+License: BSD-3-Clause
 Version: 0.1.13
 Release: 1
 Source0: %{name}-%{version}.tar.bz2
@@ -137,6 +142,7 @@ fi
 
 
 %files
+%license LICENSES/BSD-3-Clause.txt
 %{_libdir}/libnextcloudcommon.so.*
 %exclude %{_libdir}/libnextcloudcommon.so
 %{_libdir}/libnextcloudbuteocommon.so.*

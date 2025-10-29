@@ -1,11 +1,10 @@
-/****************************************************************************************
-**
-** Copyright (c) 2019 Open Mobile Platform LLC.
-** All rights reserved.
-**
-** License: Proprietary.
-**
-****************************************************************************************/
+/*
+ * SPDX-FileCopyrightText: 2019 Open Mobile Platform LLC.
+ * SPDX-FileCopyrightText: 2021 - 2023 Jolla Ltd.
+ * SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #ifndef NEXTCLOUD_NETWORKREPLYPARSER_P_H
 #define NEXTCLOUD_NETWORKREPLYPARSER_P_H
