@@ -1,12 +1,8 @@
-/****************************************************************************************
-**
-** Copyright (c) 2020 Open Mobile Platform LLC
-** Copyright (c) 2021 Jolla Ltd.
-** All rights reserved.
-**
-** License: Proprietary.
-**
-****************************************************************************************/
+// SPDX-FileCopyrightText: 2020 Open Mobile Platform LLC
+// SPDX-FileCopyrightText: 2020 - 2023 Jolla Ltd.
+// SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "nextcloudbackupqueryclient.h"
 #include "syncer_p.h"

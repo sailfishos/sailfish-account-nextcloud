@@ -1,10 +1,7 @@
-/*
- * Copyright (C) 2013-2019 Jolla Ltd.
- * Contact: Matthew Vogt <matthew.vogt@jollamobile.com>
- *
- * All rights reserved.
- * License: Proprietary.
- */
+// SPDX-FileCopyrightText: 2019 - 2023 Jolla Ltd.
+// SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "processmutex_p.h"
 

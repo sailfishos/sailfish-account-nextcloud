@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE provider>
+<!--
+SPDX-FileCopyrightText: 2019 - 2023 Jolla Ltd.
+SPDX-FileCopyrightText: 2025 Jolla Mobile Ltd
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
 <provider version="1.0" id="nextcloud">
     <name>Nextcloud</name>
     <description>Nextcloud private cloud</description>

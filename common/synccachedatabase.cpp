@@ -1,12 +1,8 @@
-/****************************************************************************************
-**
-** Copyright (C) 2013-2019 Jolla Ltd
-** Copyright (C) 2019 Open Mobile Platform LLC
-** All rights reserved.
-**
-** License: Proprietary.
-**
-****************************************************************************************/
+// SPDX-FileCopyrightText: 2019 Open Mobile Platform LLC
+// SPDX-FileCopyrightText: 2019 - 2023 Jolla Ltd.
+// SPDX-FileCopyrightText: 2024 - 2025 Jolla Mobile Ltd
+//
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "synccachedatabase.h"
 #include "synccachedatabase_p.h"
