@@ -14,6 +14,9 @@
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDebug>
 #include <QtGui/QImage>
+#include <QtCore/QUrl>
+#include <QtCore/QUrlQuery>
+
 
 using namespace SyncCache;
 
@@ -251,8 +254,6 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
                                                     const QString &albumId, const QString &photoId,
                                                     const QNetworkRequest &requestTemplate)
 {
-    Q_UNUSED(requestTemplate)
-
     DatabaseError error;
     Photo photo = m_db.photo(accountId, userId, albumId, photoId, &error);
     if (error.errorCode != DatabaseError::NoError) {
@@ -275,9 +276,45 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
         return;
     }
 
-    // Thumbnail downloading is not supported at the moment. This is not an error,
-    // so just return an empty string.
-    emit populatePhotoThumbnailFinished(idempToken, QString());
+    // otherwise, download thumbnail
+    if (!m_downloader) {
+        m_downloader = new ImageDownloader(this);
+    }
+
+    if (photo.imageUrl.isEmpty()) {
+        emit populatePhotoImageFailed(idempToken, QStringLiteral("Empty image url specified for photo %1").arg(photoId));
+        return;
+    }
+
+    QUrl thumbnailUrl = photo.imageUrl;
+    thumbnailUrl.setPath(QStringLiteral("/index.php/core/preview")); // FIXME: root path may not be server/core but /server/somelocation/core!
+    QUrlQuery previewQuery;
+    previewQuery.addQueryItem(QStringLiteral("fileId"), photoId);
+    previewQuery.addQueryItem(QStringLiteral("forceIcon"), QString::number(0));
+    previewQuery.addQueryItem(QStringLiteral("a"), QString::number(0));
+    previewQuery.addQueryItem(QStringLiteral("x"), QString::number(320));
+    previewQuery.addQueryItem(QStringLiteral("y"), QString::number(320));
+    thumbnailUrl.setQuery(previewQuery);
+
+    ImageDownloadWatcher *watcher = m_downloader->downloadImage(
+                idempToken,
+                thumbnailUrl,
+                photo.fileName,
+                SyncCache::albumImageDownloadDir(accountId, photo.albumPath, true),
+                requestTemplate);
+
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
+        emit populatePhotoThumbnailFailed(idempToken, errorMessage);
+        watcher->deleteLater();
+    });
+
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, photo, idempToken, accountId] (const QUrl &filePath) {
+        // the file has been downloaded to disk.  attempt to update the database and emit "populate" signal.
+        photoThumbnailDownloadFinished(idempToken, photo, filePath);
+        watcher->deleteLater();
+    });
 }
 
 void ImageCacheThreadWorker::photoThumbnailDownloadFinished(int idempToken, const SyncCache::Photo &photo,
