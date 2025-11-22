@@ -78,6 +78,14 @@ Requires(post): systemd
 %description -n buteo-sync-plugin-nextcloud-images
 Provides synchronisation of gallery images with Nextcloud.
 
+%package -n buteo-sync-plugin-nextcloud-notes
+Summary:   Provides synchronisation of notes with Nextcloud
+Requires: %{name} = %{version}-%{release}
+Requires: buteo-syncfw-qt5-msyncd
+
+%description -n buteo-sync-plugin-nextcloud-notes
+Provides synchronisation of notes with Nextcloud.
+
 %package -n jolla-gallery-extension-nextcloud
 Summary:   Provides integration of Nextcloud images into Gallery application
 Requires: sailfish-components-gallery-qt5 >= 1.1.9
@@ -112,6 +120,7 @@ Requires: eventsview-extensions-nextcloud
 Requires: buteo-sync-plugin-nextcloud-images
 Requires: buteo-sync-plugin-nextcloud-backup
 Requires: buteo-sync-plugin-nextcloud-posts
+Requires: buteo-sync-plugin-nextcloud-notes
 
 %description features-all
 This package is here to include all Nextcloud account
@@ -154,6 +163,7 @@ fi
 %{_datadir}/accounts/services/nextcloud-images.service
 %{_datadir}/accounts/services/nextcloud-posts.service
 %{_datadir}/accounts/services/nextcloud-sharing.service
+%{_datadir}/accounts/services/nextcloud-notes.service
 %{_datadir}/accounts/ui/nextcloud.qml
 %{_datadir}/accounts/ui/nextcloud-settings.qml
 %{_datadir}/accounts/ui/nextcloud-update.qml
@@ -191,6 +201,11 @@ fi
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-images-client.so
 %config %{_sysconfdir}/buteo/profiles/client/nextcloud-images.xml
 %config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Images.xml
+
+%files -n buteo-sync-plugin-nextcloud-notes
+%{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-notes-client.so
+%config %{_sysconfdir}/buteo/profiles/client/nextcloud-notes.xml
+%config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Notes.xml
 
 %files -n jolla-gallery-extension-nextcloud
 %{_datadir}/translations/gallery-extension-nextcloud_eng_en.qm

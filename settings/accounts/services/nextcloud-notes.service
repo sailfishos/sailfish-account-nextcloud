@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+SPDX-FileCopyrightText: 2025 Damien Caliste <dcaliste@free.fr>
+
+SPDX-License-Identifier: BSD-3-Clause
+-->
+<service id="nextcloud-notes">
+    <type>sync</type>
+    <name>Notes</name>
+    <icon>image://theme/icon-m-note</icon>
+    <provider>nextcloud</provider>
+
+    <template>
+        <setting name="sync_profile_templates" type="as">["nextcloud.Notes"]</setting>
+        <group name="auth">
+            <setting name="method">password</setting>
+            <setting name="mechanism">password</setting>
+        </group>
+    </template>
+</service>
