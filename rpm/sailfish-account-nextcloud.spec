@@ -203,6 +203,7 @@ fi
 %config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Images.xml
 
 %files -n buteo-sync-plugin-nextcloud-notes
+%{_bindir}/nextcloud-notes-client
 %{_libdir}/buteo-plugins-qt5/oopp/libnextcloud-notes-client.so
 %config %{_sysconfdir}/buteo/profiles/client/nextcloud-notes.xml
 %config %{_sysconfdir}/buteo/profiles/sync/nextcloud.Notes.xml
