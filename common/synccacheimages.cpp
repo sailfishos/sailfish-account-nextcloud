@@ -15,7 +15,6 @@
 #include <QtCore/QDebug>
 #include <QtGui/QImage>
 #include <QtCore/QUrl>
-#include <QtCore/QUrlQuery>
 
 
 using namespace SyncCache;
@@ -208,8 +207,6 @@ void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId
 void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,
                                                     const QString &albumId, const QNetworkRequest &requestTemplate)
 {
-    Q_UNUSED(requestTemplate)
-
     DatabaseError error;
     Album album = m_db.album(accountId, userId, albumId, &error);
     if (error.errorCode != DatabaseError::NoError) {
@@ -245,9 +242,48 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
         return;
     }
 
-    // Thumbnail downloading is not supported at the moment. This is not an error,
-    // so just return an empty string.
-    emit populateAlbumThumbnailFinished(idempToken, QString());
+    if (album.thumbnailUrl.isEmpty()) {
+        emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Missing thumbnail URL for album %1").arg(albumId));
+        return;
+    }
+    if (album.thumbnailFileName.isEmpty()) {
+        emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Missing thumbnail file name for album %1").arg(albumId));
+        return;
+    }
+
+    // otherwise, download thumbnail
+    if (!m_downloader) {
+        m_downloader = new ImageDownloader(this);
+    }
+
+    ImageDownloadWatcher *watcher = m_downloader->downloadImage(
+                idempToken,
+                album.thumbnailUrl,
+                album.thumbnailFileName,
+                SyncCache::albumImageDownloadDir(accountId, album.albumName, true),
+                requestTemplate);
+
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
+        emit populateAlbumThumbnailFailed(idempToken, errorMessage);
+        watcher->deleteLater();
+    });
+
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, album, idempToken] (const QUrl &filePath) {
+        DatabaseError storeError;
+        Album albumToStore = album;
+        albumToStore.thumbnailPath = filePath;
+        m_db.storeAlbum(albumToStore, &storeError);
+
+        if (storeError.errorCode != DatabaseError::NoError) {
+            QFile::remove(filePath.toString());
+            emit populateAlbumThumbnailFailed(idempToken, storeError.errorMessage);
+        } else {
+            emit populateAlbumThumbnailFinished(idempToken, filePath.toString());
+        }
+        watcher->deleteLater();
+    });
 }
 
 void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId,
@@ -281,24 +317,14 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
         m_downloader = new ImageDownloader(this);
     }
 
-    if (photo.imageUrl.isEmpty()) {
-        emit populatePhotoImageFailed(idempToken, QStringLiteral("Empty image url specified for photo %1").arg(photoId));
+    if (photo.thumbnailUrl.isEmpty()) {
+        emit populatePhotoThumbnailFailed(idempToken, QStringLiteral("Empty thumbnail url for photo %1").arg(photoId));
         return;
     }
 
-    QUrl thumbnailUrl = photo.imageUrl;
-    thumbnailUrl.setPath(QStringLiteral("/index.php/core/preview")); // FIXME: root path may not be server/core but /server/somelocation/core!
-    QUrlQuery previewQuery;
-    previewQuery.addQueryItem(QStringLiteral("fileId"), photoId);
-    previewQuery.addQueryItem(QStringLiteral("forceIcon"), QString::number(0));
-    previewQuery.addQueryItem(QStringLiteral("a"), QString::number(0));
-    previewQuery.addQueryItem(QStringLiteral("x"), QString::number(320));
-    previewQuery.addQueryItem(QStringLiteral("y"), QString::number(320));
-    thumbnailUrl.setQuery(previewQuery);
-
     ImageDownloadWatcher *watcher = m_downloader->downloadImage(
                 idempToken,
-                thumbnailUrl,
+                photo.thumbnailUrl,
                 photo.fileName,
                 SyncCache::albumImageDownloadDir(accountId, photo.albumPath, true),
                 requestTemplate);
