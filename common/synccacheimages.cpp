@@ -234,7 +234,7 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
     } else if (!thumbnailPath.isEmpty()) {
         album.thumbnailPath = thumbnailPath;
         m_db.storeAlbum(album, &error);
-        if (error.errorCode != DatabaseError::NoError) {
+        if (error.errorCode == DatabaseError::NoError) {
             emit populateAlbumThumbnailFinished(idempToken, thumbnailPath);
         } else {
             emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Cannot save thumbnail %1 for album %2 to db: %3")
