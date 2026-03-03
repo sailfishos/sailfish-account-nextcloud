@@ -268,13 +268,16 @@ bool Syncer::processQueriedAlbum(const SyncCache::Album &queriedAlbum,
             // individually, so don't save them to db here.
             const bool isNewAlbum = dbAlbum.albumId.isEmpty();
             const bool isModifiedAlbum = serverAlbum.etag != dbAlbum.etag;
+            const bool missingThumbnailMetadata = !isNewAlbum
+                    && (dbAlbum.thumbnailUrl.isEmpty() || dbAlbum.thumbnailFileName.isEmpty());
 
             qCDebug(lcNextcloud) << Q_FUNC_INFO << "Sub-album:" << serverAlbum.albumId
                       << "etag:" << serverAlbum.etag
                       << "new?" << isNewAlbum
-                      << "modified?" << isModifiedAlbum;
+                      << "modified?" << isModifiedAlbum
+                      << "missing thumbnail metadata?" << missingThumbnailMetadata;
 
-            if (m_forceFullSync || isNewAlbum || isModifiedAlbum) {
+            if (m_forceFullSync || isNewAlbum || isModifiedAlbum || missingThumbnailMetadata) {
                 m_syncProgressInfo.pendingAlbumListings.append(serverAlbum.albumId);
             }
         }
@@ -330,8 +333,12 @@ bool Syncer::calculateAndApplyDelta(const SyncCache::Album &mainAlbum,
     }
 
     const bool isNewAlbum = dbAlbum.albumId.isEmpty();
+    const bool missingAlbumThumbnailMetadata =
+            (!mainAlbum.thumbnailUrl.isEmpty() && dbAlbum.thumbnailUrl.isEmpty())
+            || (!mainAlbum.thumbnailFileName.isEmpty() && dbAlbum.thumbnailFileName.isEmpty());
     const bool isModifiedAlbum = mainAlbum.etag != dbAlbum.etag
-            || mainAlbum.photoCount != dbAlbum.photoCount;
+            || mainAlbum.photoCount != dbAlbum.photoCount
+            || missingAlbumThumbnailMetadata;
 
     qCDebug(lcNextcloud) << Q_FUNC_INFO << "Album:" << mainAlbum.albumId
               << "photoCount:" << mainAlbum.photoCount
@@ -384,7 +391,9 @@ bool Syncer::calculateAndApplyDelta(const SyncCache::Album &mainAlbum,
     for (const SyncCache::Photo &serverPhoto : photos) {
         SyncCache::Photo dbPhoto = db->photo(m_accountId, m_userId, serverPhoto.albumId, serverPhoto.photoId, nullptr);
         const bool isNewPhoto = dbPhoto.photoId.isEmpty();
-        if (dbPhoto.etag != serverPhoto.etag) {
+        const bool missingPhotoThumbnailMetadata =
+                dbPhoto.thumbnailUrl.isEmpty() && !serverPhoto.thumbnailUrl.isEmpty();
+        if (dbPhoto.etag != serverPhoto.etag || missingPhotoThumbnailMetadata) {
             db->storePhoto(serverPhoto, error);
             if (error->errorCode != SyncCache::DatabaseError::NoError) {
                 qCWarning(lcNextcloud) << Q_FUNC_INFO << "failed to update photo:"

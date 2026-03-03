@@ -7,6 +7,7 @@
 #include "synccacheimages.h"
 #include "synccacheimages_p.h"
 #include "synccacheimagedownloads_p.h"
+#include "nextcloudpreviewurl_p.h"
 
 #include <QtCore/QThread>
 #include <QtCore/QFile>
@@ -242,12 +243,10 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
         return;
     }
 
-    if (album.thumbnailUrl.isEmpty()) {
-        emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Missing thumbnail URL for album %1").arg(albumId));
-        return;
-    }
-    if (album.thumbnailFileName.isEmpty()) {
-        emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Missing thumbnail file name for album %1").arg(albumId));
+    if (album.thumbnailUrl.isEmpty() || album.thumbnailFileName.isEmpty()) {
+        // Some albums (for example empty albums) may not have preview metadata.
+        // This is not an error; caller can show a placeholder.
+        emit populateAlbumThumbnailFinished(idempToken, QString());
         return;
     }
 
@@ -318,8 +317,13 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
     }
 
     if (photo.thumbnailUrl.isEmpty()) {
-        emit populatePhotoThumbnailFailed(idempToken, QStringLiteral("Empty thumbnail url for photo %1").arg(photoId));
-        return;
+        // Older db records may not have thumbnail metadata yet.
+        // Try deriving the preview URL from the stored image URL + photo id.
+        photo.thumbnailUrl = NextcloudPreviewUrl::buildFromImageUrl(photo.imageUrl, photo.photoId);
+        if (photo.thumbnailUrl.isEmpty()) {
+            emit populatePhotoThumbnailFinished(idempToken, QString());
+            return;
+        }
     }
 
     ImageDownloadWatcher *watcher = m_downloader->downloadImage(
