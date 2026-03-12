@@ -12,6 +12,7 @@ TARGET = nextcloudcommon
 TARGET = $$qtLibraryTarget($$TARGET)
 
 HEADERS += \
+    $$PWD/nextcloudpreviewurl_p.h \
     $$PWD/processmutex_p.h \
     $$PWD/synccachedatabase.h \
     $$PWD/synccachedatabase_p.h \

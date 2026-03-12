@@ -6,6 +6,7 @@
 
 #include "replyparser_p.h"
 #include "syncer_p.h"
+#include "nextcloudpreviewurl_p.h"
 
 namespace {
 
@@ -72,6 +73,8 @@ ReplyParser::GalleryMetadata ReplyParser::galleryMetadataFromResources(Syncer *i
             album->userId = resource.ownerId;
             album->albumId = albumId;
             album->albumName = albumName;
+            // Note: album thumbnailUrl is set below from the first photo's fileId,
+            // because the preview API only works with file IDs, not directory IDs.
             if (isQueriedAlbum) {
                 album->parentAlbumId = normalizedQueriedAlbumPath == normalizedRootPath
                         ? QString()
@@ -95,6 +98,7 @@ ReplyParser::GalleryMetadata ReplyParser::galleryMetadataFromResources(Syncer *i
             photo.createdTimestamp = photo.updatedTimestamp;
             photo.fileName = resource.href.mid(resource.href.lastIndexOf('/') + 1);
             photo.albumPath = albumName;
+            photo.thumbnailUrl = NextcloudPreviewUrl::build(imageSyncer->serverUrl(), resource.fileId);
             photo.imageUrl = imageSyncer->serverUrl();
             photo.imageUrl.setPath(resource.href);
             photo.fileSize = resource.size;
@@ -107,5 +111,16 @@ ReplyParser::GalleryMetadata ReplyParser::galleryMetadataFromResources(Syncer *i
     }
 
     metadata.album.photoCount = queriedAlbumPhotoCount;
+
+    // Set the queried album's thumbnail from the first photo in the album.
+    // The Nextcloud preview API only generates previews for files, not directories.
+    // Note: NextCloud Gallery or Memories may use different approach, e.g. using random photo.
+    // WebDav itself doesn't provide such information.
+    if (!metadata.photos.isEmpty()) {
+        metadata.album.thumbnailUrl = NextcloudPreviewUrl::build(
+                    imageSyncer->serverUrl(), metadata.photos.first().photoId);
+        metadata.album.thumbnailFileName = metadata.photos.first().fileName;
+    }
+
     return metadata;
 }

@@ -7,6 +7,7 @@
 #include "synccacheimages.h"
 #include "synccacheimages_p.h"
 #include "synccacheimagedownloads_p.h"
+#include "nextcloudpreviewurl_p.h"
 
 #include <QtCore/QThread>
 #include <QtCore/QFile>
@@ -14,6 +15,8 @@
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDebug>
 #include <QtGui/QImage>
+#include <QtCore/QUrl>
+
 
 using namespace SyncCache;
 
@@ -205,8 +208,6 @@ void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId
 void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,
                                                     const QString &albumId, const QNetworkRequest &requestTemplate)
 {
-    Q_UNUSED(requestTemplate)
-
     DatabaseError error;
     Album album = m_db.album(accountId, userId, albumId, &error);
     if (error.errorCode != DatabaseError::NoError) {
@@ -231,7 +232,7 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
     } else if (!thumbnailPath.isEmpty()) {
         album.thumbnailPath = thumbnailPath;
         m_db.storeAlbum(album, &error);
-        if (error.errorCode != DatabaseError::NoError) {
+        if (error.errorCode == DatabaseError::NoError) {
             emit populateAlbumThumbnailFinished(idempToken, thumbnailPath);
         } else {
             emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Cannot save thumbnail %1 for album %2 to db: %3")
@@ -242,17 +243,52 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
         return;
     }
 
-    // Thumbnail downloading is not supported at the moment. This is not an error,
-    // so just return an empty string.
-    emit populateAlbumThumbnailFinished(idempToken, QString());
+    if (album.thumbnailUrl.isEmpty() || album.thumbnailFileName.isEmpty()) {
+        // Some albums (for example empty albums) may not have preview metadata.
+        // This is not an error; caller can show a placeholder.
+        emit populateAlbumThumbnailFinished(idempToken, QString());
+        return;
+    }
+
+    // otherwise, download thumbnail
+    if (!m_downloader) {
+        m_downloader = new ImageDownloader(this);
+    }
+
+    ImageDownloadWatcher *watcher = m_downloader->downloadImage(
+                idempToken,
+                album.thumbnailUrl,
+                album.thumbnailFileName,
+                SyncCache::albumImageDownloadDir(accountId, album.albumName, true),
+                requestTemplate);
+
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
+        emit populateAlbumThumbnailFailed(idempToken, errorMessage);
+        watcher->deleteLater();
+    });
+
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, album, idempToken] (const QUrl &filePath) {
+        DatabaseError storeError;
+        Album albumToStore = album;
+        albumToStore.thumbnailPath = filePath;
+        m_db.storeAlbum(albumToStore, &storeError);
+
+        if (storeError.errorCode != DatabaseError::NoError) {
+            QFile::remove(filePath.toString());
+            emit populateAlbumThumbnailFailed(idempToken, storeError.errorMessage);
+        } else {
+            emit populateAlbumThumbnailFinished(idempToken, filePath.toString());
+        }
+        watcher->deleteLater();
+    });
 }
 
 void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountId, const QString &userId,
                                                     const QString &albumId, const QString &photoId,
                                                     const QNetworkRequest &requestTemplate)
 {
-    Q_UNUSED(requestTemplate)
-
     DatabaseError error;
     Photo photo = m_db.photo(accountId, userId, albumId, photoId, &error);
     if (error.errorCode != DatabaseError::NoError) {
@@ -275,9 +311,40 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
         return;
     }
 
-    // Thumbnail downloading is not supported at the moment. This is not an error,
-    // so just return an empty string.
-    emit populatePhotoThumbnailFinished(idempToken, QString());
+    // otherwise, download thumbnail
+    if (!m_downloader) {
+        m_downloader = new ImageDownloader(this);
+    }
+
+    if (photo.thumbnailUrl.isEmpty()) {
+        // Older db records may not have thumbnail metadata yet.
+        // Try deriving the preview URL from the stored image URL + photo id.
+        photo.thumbnailUrl = NextcloudPreviewUrl::buildFromImageUrl(photo.imageUrl, photo.photoId);
+        if (photo.thumbnailUrl.isEmpty()) {
+            emit populatePhotoThumbnailFinished(idempToken, QString());
+            return;
+        }
+    }
+
+    ImageDownloadWatcher *watcher = m_downloader->downloadImage(
+                idempToken,
+                photo.thumbnailUrl,
+                photo.fileName,
+                SyncCache::albumImageDownloadDir(accountId, photo.albumPath, true),
+                requestTemplate);
+
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
+        emit populatePhotoThumbnailFailed(idempToken, errorMessage);
+        watcher->deleteLater();
+    });
+
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, photo, idempToken, accountId] (const QUrl &filePath) {
+        // the file has been downloaded to disk.  attempt to update the database and emit "populate" signal.
+        photoThumbnailDownloadFinished(idempToken, photo, filePath);
+        watcher->deleteLater();
+    });
 }
 
 void ImageCacheThreadWorker::photoThumbnailDownloadFinished(int idempToken, const SyncCache::Photo &photo,
