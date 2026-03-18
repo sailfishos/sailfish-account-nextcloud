@@ -29,21 +29,35 @@ NotificationGroupMember {
         }
     }
 
-    Image {
-        id: image
+    Rectangle {
+        id: imageContainer
 
         y: Theme.paddingLarge
         width: Theme.iconSizeMedium
         height: Theme.iconSizeMedium
+        radius: Theme.paddingSmall
+        color: "#FAF9F6" // whitish
+
+        Image {
+            id: image
+
+            anchors.centerIn: parent
+            width: Theme.iconSizeMedium - 2*Theme.paddingSmall
+            height: width
+
+            // might be svg, ensure it gets rendered at the end result resolution
+            sourceSize.width: width
+            sourceSize.height: height
+        }
     }
 
     Column {
         id: content
 
         anchors {
-            left: image.right
+            left: imageContainer.right
             leftMargin: Theme.paddingMedium
-            top: image.top
+            top: imageContainer.top
             topMargin: -Theme.paddingSmall
         }
 

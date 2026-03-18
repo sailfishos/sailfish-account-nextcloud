@@ -136,6 +136,9 @@ void EventImageDownloader::triggerDownload()
                         if (!dir.exists()) {
                             dir.mkpath(QStringLiteral("."));
                         }
+
+                        // TODO: the file is likely svg without file extension.
+                        // Ideally we'd maybe convert around here to png with proper file name
                         QSaveFile file(download->m_filePath);
                         if (!file.open(QFile::WriteOnly)) {
                             if (download->m_watcher) {
