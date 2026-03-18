@@ -187,7 +187,8 @@ void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId
     DatabaseError error;
     User user = m_db.user(accountId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populateUserThumbnailFailed(idempToken, QStringLiteral("Error occurred while reading user %1 info from db: %2")
+        emit populateUserThumbnailFailed(idempToken,
+                                         QStringLiteral("Error occurred while reading user %1 info from db: %2")
                                          .arg(userId)
                                          .arg(error.errorMessage));
         return;
@@ -211,7 +212,8 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
     DatabaseError error;
     Album album = m_db.album(accountId, userId, albumId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Error occurred while reading album %1 info from db: %2")
+        emit populateAlbumThumbnailFailed(idempToken,
+                                          QStringLiteral("Error occurred while reading album %1 info from db: %2")
                                           .arg(albumId)
                                           .arg(error.errorMessage));
         return;
@@ -235,7 +237,8 @@ void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountI
         if (error.errorCode == DatabaseError::NoError) {
             emit populateAlbumThumbnailFinished(idempToken, thumbnailPath);
         } else {
-            emit populateAlbumThumbnailFailed(idempToken, QStringLiteral("Cannot save thumbnail %1 for album %2 to db: %3")
+            emit populateAlbumThumbnailFailed(idempToken,
+                                              QStringLiteral("Cannot save thumbnail %1 for album %2 to db: %3")
                                               .arg(thumbnailPath)
                                               .arg(albumId)
                                               .arg(error.errorMessage));
@@ -292,7 +295,8 @@ void ImageCacheThreadWorker::populatePhotoThumbnail(int idempToken, int accountI
     DatabaseError error;
     Photo photo = m_db.photo(accountId, userId, albumId, photoId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populatePhotoThumbnailFailed(idempToken, QStringLiteral("Error occurred while reading photo %1 info from db: %2")
+        emit populatePhotoThumbnailFailed(idempToken,
+                                          QStringLiteral("Error occurred while reading photo %1 info from db: %2")
                                           .arg(photoId)
                                           .arg(error.errorMessage));
         return;
@@ -369,7 +373,8 @@ void ImageCacheThreadWorker::populatePhotoImage(int idempToken, int accountId, c
     DatabaseError error;
     Photo photo = m_db.photo(accountId, userId, albumId, photoId, &error);
     if (error.errorCode != DatabaseError::NoError) {
-        emit populatePhotoImageFailed(idempToken, QStringLiteral("Error occurred while reading photo info from db: %1")
+        emit populatePhotoImageFailed(idempToken,
+                                      QStringLiteral("Error occurred while reading photo info from db: %1")
                                       .arg(error.errorMessage));
         return;
     }

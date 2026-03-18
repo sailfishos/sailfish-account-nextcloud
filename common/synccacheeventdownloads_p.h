@@ -41,10 +41,10 @@ class EventImageDownload
 {
 public:
     EventImageDownload(int idempToken,
-            const QUrl &imageUrl,
-            const QString &filePath,
-            const QNetworkRequest &templateRequest,
-            EventImageDownloadWatcher *watcher);
+                       const QUrl &imageUrl,
+                       const QString &filePath,
+                       const QNetworkRequest &templateRequest,
+                       EventImageDownloadWatcher *watcher);
     ~EventImageDownload();
 
     int m_idempToken = 0;

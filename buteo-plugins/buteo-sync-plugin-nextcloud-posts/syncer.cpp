@@ -118,10 +118,9 @@ void Syncer::handleNotificationListReply()
 
     SyncCache::EventDatabase db;
     SyncCache::DatabaseError error;
-    db.openDatabase(
-            QStringLiteral("%1/system/privileged/Posts/nextcloud.db")
-                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
-            &error);
+    db.openDatabase(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+                        + QStringLiteral("/system/privileged/Posts/nextcloud.db"),
+                    &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
         emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2")
@@ -171,7 +170,7 @@ void Syncer::handleNotificationListReply()
                 if (error.errorCode != SyncCache::DatabaseError::NoError) {
                     transactionsSucceeded = false;
                     qCWarning(lcNextcloud) << "Failed to delete event" << event.eventId << ":"
-                                << error.errorCode << error.errorMessage;
+                                           << error.errorCode << error.errorMessage;
                     break;
                 }
             }
@@ -202,7 +201,7 @@ void Syncer::handleNotificationListReply()
             if (error.errorCode != SyncCache::DatabaseError::NoError) {
                 transactionsSucceeded = false;
                 qCWarning(lcNextcloud) << "Failed to store event" << event.eventId << ":"
-                            << error.errorCode << error.errorMessage;
+                                       << error.errorCode << error.errorMessage;
                 break;
             }
         }
@@ -302,10 +301,9 @@ void Syncer::purgeAccount(int accountId)
 {
     SyncCache::EventDatabase db;
     SyncCache::DatabaseError error;
-    db.openDatabase(
-            QStringLiteral("%1/system/privileged/Posts/nextcloud.db")
-                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
-            &error);
+    db.openDatabase(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+                        + QStringLiteral("/system/privileged/Posts/nextcloud.db"),
+                    &error);
 
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
         emit finishWithError(QStringLiteral("Failed to open Posts database: %1: %2")

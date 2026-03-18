@@ -16,7 +16,8 @@ using namespace SyncCache;
 //-----------------------------------------------------------------------------
 
 EventCacheThreadWorker::EventCacheThreadWorker(QObject *parent)
-    : QObject(parent), m_downloader(nullptr)
+    : QObject(parent)
+    , m_downloader(nullptr)
 {
 }
 
@@ -107,16 +108,19 @@ void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, c
     if (!m_downloader) {
         m_downloader = new EventImageDownloader(this);
     }
+
     EventImageDownloadWatcher *watcher = m_downloader->downloadImage(
                 idempToken,
                 event.imageUrl,
                 QStringLiteral("%1/event-%2-icon").arg(EventCache::eventCacheDir(accountId)).arg(event.eventId),
                 requestTemplate);
+
     connect(watcher, &EventImageDownloadWatcher::downloadFailed,
             this, [this, watcher, idempToken] (const QString &errorMessage) {
         emit populateEventImageFailed(idempToken, errorMessage);
         watcher->deleteLater();
     });
+
     connect(watcher, &EventImageDownloadWatcher::downloadFinished,
             this, [this, watcher, event, idempToken] (const QUrl &filePath) {
         // the file has been downloaded to disk.  attempt to update the database.
@@ -131,6 +135,7 @@ void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, c
         eventToStore.imagePath = filePath;
         eventToStore.timestamp = event.timestamp;
         m_db.storeEvent(eventToStore, &storeError);
+
         if (storeError.errorCode != DatabaseError::NoError) {
             QFile::remove(filePath.toString());
             emit populateEventImageFailed(idempToken, storeError.errorMessage);
@@ -144,7 +149,8 @@ void EventCacheThreadWorker::populateEventImage(int idempToken, int accountId, c
 //-----------------------------------------------------------------------------
 
 EventCachePrivate::EventCachePrivate(EventCache *parent)
-    : QObject(parent), m_worker(new EventCacheThreadWorker)
+    : QObject(parent)
+    , m_worker(new EventCacheThreadWorker)
 {
     qRegisterMetaType<SyncCache::Event>();
     qRegisterMetaType<QVector<SyncCache::Event> >();
@@ -196,7 +202,8 @@ EventCachePrivate::~EventCachePrivate()
 //-----------------------------------------------------------------------------
 
 EventCache::EventCache(QObject *parent)
-    : QObject(parent), d_ptr(new EventCachePrivate(this))
+    : QObject(parent)
+    , d_ptr(new EventCachePrivate(this))
 {
 }
 
@@ -212,8 +219,8 @@ QString EventCache::eventCacheDir(int accountId)
 
 QString EventCache::eventCacheRootDir()
 {
-    return QStringLiteral("%1/system/privileged/Posts")
-            .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation));
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+           + QStringLiteral("/system/privileged/Posts");
 }
 
 void EventCache::openDatabase(const QString &databaseFile)

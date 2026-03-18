@@ -58,15 +58,14 @@ void NextcloudEventCache::performRequests()
     QList<NextcloudEventCache::PendingRequest>::iterator it = m_pendingRequests.begin();
     while (it != m_pendingRequests.end()) {
         NextcloudEventCache::PendingRequest req = *it;
+
         if (m_accountIdAccessTokens.contains(req.accountId)
                 || m_accountIdCredentials.contains(req.accountId)) {
-            switch (req.type) {
-                case PopulateEventImageType:
-                        SyncCache::EventCache::populateEventImage(
-                                req.idempToken, req.accountId, req.eventId,
-                                templateRequest(req.accountId));
-                        break;
+            if (req.type == PopulateEventImageType) {
+                SyncCache::EventCache::populateEventImage(req.idempToken, req.accountId, req.eventId,
+                                                          templateRequest(req.accountId));
             }
+
             it = m_pendingRequests.erase(it);
         } else {
             if (!m_pendingAccountRequests.contains(req.accountId)) {
@@ -75,7 +74,8 @@ void NextcloudEventCache::performRequests()
                     m_pendingAccountRequests.append(req.accountId);
                     signIn(req.accountId);
                 } else {
-                    qWarning() << "NextcloudEventCache refusing to perform sign-on request for failing account:" << req.accountId;
+                    qWarning() << "NextcloudEventCache refusing to perform sign-on request for failing account:"
+                               << req.accountId;
                 }
             } else {
                 // nothing, waiting for asynchronous account flow to finish.

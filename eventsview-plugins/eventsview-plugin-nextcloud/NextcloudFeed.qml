@@ -117,8 +117,8 @@ NotificationGroupItem {
 
         title: root.collapsed
                ? defaultTitle
-                 //% "Show more in Nextcloud"
-               : qsTrId("lipstick-jolla-home-la-show-more-in-nextcloud")
+               : //% "Show more in Nextcloud"
+                 qsTrId("lipstick-jolla-home-la-show-more-in-nextcloud")
         remainingCount: eventModel.count - boundedModel.count
 
         onClicked: {
@@ -139,6 +139,7 @@ NotificationGroupItem {
 
     Timer {
         id: refreshEventModelTimer
+
         interval: 5 * 60 * 1000
         repeat: true
         running: root.showingInActiveView
@@ -187,6 +188,7 @@ NotificationGroupItem {
 
             NextcloudEventImageDownloader {
                 id: imageDownloader
+
                 accountId: eventModel.accountId
                 eventCache: evCache
                 eventId: model.eventId

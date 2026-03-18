@@ -19,7 +19,9 @@ NotificationGroupMember {
     property string eventUrl
 
     width: parent.width
-    contentHeight: Math.max(image.y + image.height, content.y + content.height) + Theme.paddingLarge
+    contentHeight: Math.max(image.y + image.height,
+                            content.y + content.height)
+                   + Theme.paddingLarge
 
     onTriggered: {
         if (eventUrl.length > 0) {
