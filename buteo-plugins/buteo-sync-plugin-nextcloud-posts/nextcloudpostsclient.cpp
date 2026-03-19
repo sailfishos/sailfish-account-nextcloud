@@ -15,19 +15,17 @@
 #include <ProfileEngineDefs.h>
 #include <ProfileManager.h>
 
-Buteo::ClientPlugin* NextcloudPostsClientLoader::createClientPlugin(
-        const QString& pluginName,
-        const Buteo::SyncProfile& profile,
-        Buteo::PluginCbInterface* cbInterface)
+Buteo::ClientPlugin* NextcloudPostsClientLoader::createClientPlugin(const QString &pluginName,
+                                                                    const Buteo::SyncProfile &profile,
+                                                                    Buteo::PluginCbInterface *cbInterface)
 {
     return new NextcloudPostsClient(pluginName, profile, cbInterface);
 }
 
 
-NextcloudPostsClient::NextcloudPostsClient(
-        const QString& pluginName,
-        const Buteo::SyncProfile& profile,
-        Buteo::PluginCbInterface *cbInterface)
+NextcloudPostsClient::NextcloudPostsClient(const QString &pluginName,
+                                           const Buteo::SyncProfile &profile,
+                                           Buteo::PluginCbInterface *cbInterface)
     : ClientPlugin(pluginName, profile, cbInterface)
     , m_syncer(0)
     , m_accountId(0)
@@ -77,7 +75,7 @@ bool NextcloudPostsClient::init()
 bool NextcloudPostsClient::uninit()
 {
     delete m_syncer;
-    m_syncer = 0;
+    m_syncer = nullptr;
     return true;
 }
 
@@ -145,7 +143,7 @@ bool NextcloudPostsClient::cleanUp()
 
     m_syncer->purgeAccount(m_accountId);
     delete m_syncer;
-    m_syncer = 0;
+    m_syncer = nullptr;
 
     return true;
 }

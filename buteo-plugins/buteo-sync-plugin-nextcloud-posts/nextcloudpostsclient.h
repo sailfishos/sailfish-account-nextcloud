@@ -20,15 +20,15 @@
 #include <QtCore/QObject>
 
 class Syncer;
+
 class Q_DECL_EXPORT NextcloudPostsClient : public Buteo::ClientPlugin
 {
     Q_OBJECT
 
 public:
-    NextcloudPostsClient(
-            const QString &pluginName,
-            const Buteo::SyncProfile &profile,
-            Buteo::PluginCbInterface *cbInterface);
+    NextcloudPostsClient(const QString &pluginName,
+                         const Buteo::SyncProfile &profile,
+                         Buteo::PluginCbInterface *cbInterface);
     ~NextcloudPostsClient();
 
     bool init();

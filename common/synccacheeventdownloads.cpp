@@ -21,7 +21,9 @@ const int MaxActiveImageRequests = 10;
 //-----------------------------------------------------------------------------
 
 EventImageDownloadWatcher::EventImageDownloadWatcher(int idempToken, const QUrl &imageUrl, QObject *parent)
-    : QObject(parent), m_idempToken(idempToken), m_imageUrl(imageUrl)
+    : QObject(parent)
+    , m_idempToken(idempToken)
+    , m_imageUrl(imageUrl)
 {
 }
 
@@ -41,12 +43,11 @@ QUrl EventImageDownloadWatcher::imageUrl() const
 
 //-----------------------------------------------------------------------------
 
-EventImageDownload::EventImageDownload(
-        int idempToken,
-        const QUrl &imageUrl,
-        const QString &filePath,
-        const QNetworkRequest &templateRequest,
-        EventImageDownloadWatcher *watcher)
+EventImageDownload::EventImageDownload(int idempToken,
+                                       const QUrl &imageUrl,
+                                       const QString &filePath,
+                                       const QNetworkRequest &templateRequest,
+                                       EventImageDownloadWatcher *watcher)
     : m_idempToken(idempToken)
     , m_imageUrl(imageUrl)
     , m_filePath(filePath)
@@ -115,6 +116,7 @@ void EventImageDownloader::triggerDownload()
         request.setUrl(imageUrl);
         QNetworkReply *reply = m_qnam.get(request);
         download->m_reply = reply;
+
         if (reply) {
             connect(reply, &QNetworkReply::finished, this, [this, reply, download] {
                 if (reply->error() != QNetworkReply::NoError) {
@@ -134,11 +136,15 @@ void EventImageDownloader::triggerDownload()
                         if (!dir.exists()) {
                             dir.mkpath(QStringLiteral("."));
                         }
+
+                        // TODO: the file is likely svg without file extension.
+                        // Ideally we'd maybe convert around here to png with proper file name
                         QSaveFile file(download->m_filePath);
                         if (!file.open(QFile::WriteOnly)) {
                             if (download->m_watcher) {
-                                emit download->m_watcher->downloadFailed(QStringLiteral("Error opening event image file %1 for writing: %2")
-                                                                                   .arg(download->m_filePath, file.errorString()));
+                                emit download->m_watcher->downloadFailed(
+                                    QStringLiteral("Error opening event image file %1 for writing: %2")
+                                        .arg(download->m_filePath, file.errorString()));
                             }
                         } else {
                             file.write(replyData);
