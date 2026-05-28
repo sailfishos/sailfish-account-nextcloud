@@ -148,10 +148,10 @@ void NextcloudEnabledUsersListener::addAccount(Accounts::AccountId accountId)
     info.account = account;
 
     account->selectService(Accounts::Service());
-    info.accountEnabled = account->enabled();
+    info.accountEnabled = account->isEnabled();
 
     account->selectService(imagesService);
-    info.imageServiceEnabled = account->enabled();
+    info.imageServiceEnabled = account->isEnabled();
     account->selectService(Accounts::Service());
 
     m_accounts.insert(account->id(), info);
