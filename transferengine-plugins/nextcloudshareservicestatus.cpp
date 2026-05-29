@@ -116,7 +116,7 @@ void NextcloudShareServiceStatus::queryStatus(QueryStatusMode mode)
             }
         }
 
-        if (acc->enabled() && service.isValid() && found) {
+        if (acc->isEnabled() && service.isValid() && found) {
             if (acc->value(QStringLiteral("CredentialsNeedUpdate")).toBool() == true) {
                 // credentials need update for global service, skip the account
                 qWarning() << Q_FUNC_INFO << "Credentials need update for account id: " << id;
@@ -130,7 +130,7 @@ void NextcloudShareServiceStatus::queryStatus(QueryStatusMode mode)
                 continue;
             }
 
-            if (acc->enabled()) {
+            if (acc->isEnabled()) {
                 if (!m_accountIdToDetailsIdx.contains(id)) {
                     AccountDetails details;
                     details.accountId = id;

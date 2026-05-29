@@ -21,7 +21,6 @@ BuildRequires: pkgconfig(mlite5)
 BuildRequires: pkgconfig(buteosyncfw5) >= 0.10.0
 BuildRequires: pkgconfig(accounts-qt5)
 BuildRequires: pkgconfig(socialcache)
-BuildRequires: pkgconfig(libsailfishkeyprovider)
 BuildRequires: pkgconfig(sailfishaccounts)
 BuildRequires: pkgconfig(nemotransferengine-qt5) >= 2.0.0
 BuildRequires: qt5-qttools

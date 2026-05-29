@@ -12,7 +12,7 @@ TARGETPATH = $$[QT_INSTALL_QML]/$$MODULENAME
 
 QT += qml
 CONFIG += plugin link_pkgconfig
-PKGCONFIG += accounts-qt5 libsailfishkeyprovider sailfishaccounts
+PKGCONFIG += accounts-qt5 sailfishaccounts
 
 include($$PWD/../../common/common.pri)
 
