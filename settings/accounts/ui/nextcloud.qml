@@ -17,7 +17,8 @@ OnlineSyncAccountCreationAgent {
         accountManager.service("nextcloud-carddav"),
         accountManager.service("nextcloud-images"),
         accountManager.service("nextcloud-posts"),
-        accountManager.service("nextcloud-sharing")
+        accountManager.service("nextcloud-sharing"),
+        accountManager.service("nextcloud-notes")
     ]
 
     sharedScheduleServices: [

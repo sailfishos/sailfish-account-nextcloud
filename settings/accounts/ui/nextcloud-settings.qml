@@ -16,7 +16,8 @@ OnlineSyncAccountSettingsAgent {
         accountManager.service("nextcloud-caldav"),
         accountManager.service("nextcloud-images"),
         accountManager.service("nextcloud-posts"),
-        accountManager.service("nextcloud-sharing")
+        accountManager.service("nextcloud-sharing"),
+        accountManager.service("nextcloud-notes")
     ]
 
     sharedScheduleServices: [

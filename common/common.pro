@@ -14,6 +14,7 @@ TARGET = $$qtLibraryTarget($$TARGET)
 HEADERS += \
     $$PWD/nextcloudpreviewurl_p.h \
     $$PWD/processmutex_p.h \
+    $$PWD/notesclient.h \
     $$PWD/synccachedatabase.h \
     $$PWD/synccachedatabase_p.h \
     $$PWD/synccacheevents.h \
@@ -26,6 +27,7 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/processmutex.cpp \
+    $$PWD/notesclient.cpp \
     $$PWD/synccachedatabase.cpp \
     $$PWD/synccacheevents.cpp \
     $$PWD/eventdatabase.cpp \
