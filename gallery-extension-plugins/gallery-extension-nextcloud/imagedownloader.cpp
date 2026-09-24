@@ -9,6 +9,7 @@
 
 #include <QtCore/QDebug>
 #include <QtQml/QQmlInfo>
+#include <QRegularExpression>
 
 NextcloudImageDownloader::NextcloudImageDownloader(QObject *parent)
     : QObject(parent)
@@ -265,7 +266,11 @@ void NextcloudImageDownloader::populateFinished(int idempToken, const QString &p
 void NextcloudImageDownloader::populateFailed(int idempToken, const QString &errorMessage)
 {
     if (m_idempToken == idempToken) {
-        qmlInfo(this) << "NextcloudImageDownloader failed to load image:" << errorMessage;
+        // errorMessage prints the full URL, including password. Lets censor that.
+        QString message = errorMessage;
+        message.replace(QRegularExpression(":[^\\/^@]*@"), ":<<REDACTED>>@");
+        qmlInfo(this) << "NextcloudImageDownloader failed to load image:"
+                      << message;
         setStatus(Error);
     }
 }
