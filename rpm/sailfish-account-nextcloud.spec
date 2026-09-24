@@ -5,7 +5,7 @@
 
 Name: sailfish-account-nextcloud
 License: BSD-3-Clause
-Version: 1.1.0
+Version: 1.1.3
 Release: 1
 Source0: %{name}-%{version}.tar.bz2
 Summary: Account plugin for Nextcloud

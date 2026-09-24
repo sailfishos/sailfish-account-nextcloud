@@ -233,6 +233,7 @@ public:
     void setAlbumId(const QString &albumId);
 
     Q_INVOKABLE QVariantMap at(int row) const;
+    Q_INVOKABLE QVariantMap get(int row) const { return at(row); };
 
 Q_SIGNALS:
     void imageCacheChanged();

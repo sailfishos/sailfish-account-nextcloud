@@ -31,7 +31,7 @@ Item {
         }
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
-        wrapMode: Text.WrapAnywhere
+        wrapMode: Text.Wrap
         font.pixelSize: Theme.fontSizeLarge
         fontSizeMode: Text.VerticalFit
     }
