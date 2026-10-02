@@ -221,3 +221,10 @@ QNetworkReply *NetworkRequestGenerator::download(const QString &remoteFilePath)
     request.setRawHeader("Depth", "1");
     return sendRequest(request, "GET");
 }
+
+QNetworkReply *NetworkRequestGenerator::downloadUserAvatar(const QString& userId)
+{
+    QString path = m_serverUrl.path();
+    path.append("/index.php/avatar/" + userId + "/512"); // FIXME, what's the correct size?
+    return download(path);
+}

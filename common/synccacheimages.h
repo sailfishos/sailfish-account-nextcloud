@@ -100,6 +100,7 @@ public:
 
     SyncCache::PhotoCounter photoCount(int accountId, const QString &userId, SyncCache::DatabaseError *error) const;
     QString findThumbnailForAlbum(int accountId, const QString &userId, const QString &albumId, SyncCache::DatabaseError *error) const;
+    QString findThumbnailForUser(int accountId, const QString &userId, DatabaseError *error) const;
 
     void storeUser(const SyncCache::User &user, SyncCache::DatabaseError *error);
     void storeAlbum(const SyncCache::Album &album, SyncCache::DatabaseError *error);

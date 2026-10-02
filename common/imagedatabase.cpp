@@ -734,6 +734,38 @@ QString ImageDatabase::findThumbnailForAlbum(int accountId, const QString &userI
             error);
 }
 
+QString ImageDatabase::findThumbnailForUser(int accountId, const QString &userId, DatabaseError *error) const
+{
+    SYNCCACHE_DB_D(const ImageDatabase);
+
+    if (accountId <= 0) {
+        setDatabaseError(error, DatabaseError::InvalidArgumentError,
+                         QStringLiteral("Cannot fetch thumbnail, invalid accountId: %1").arg(accountId));
+        return QString();
+    }
+
+    const QString queryString = QStringLiteral("SELECT thumbnailPath FROM Users"
+        " WHERE accountId = :accountId AND userId = :userId AND thumbnailPath !='' ORDER BY updatedTimestamp DESC LIMIT 1");
+
+    const QList<QPair<QString, QVariant> > bindValues {
+        qMakePair<QString, QVariant>(QStringLiteral(":accountId"), accountId),
+        qMakePair<QString, QVariant>(QStringLiteral(":userId"), userId),
+    };
+
+    auto resultHandler = [](DatabaseQuery &selectQuery) -> QString {
+        return selectQuery.value(0).toString();
+    };
+
+    return DatabaseImpl::fetch<QString>(
+            d,
+            queryString,
+            bindValues,
+            resultHandler,
+            QStringLiteral("findThumbnailForUser"),
+            error);
+}
+
+
 void ImageDatabase::storeUser(const User &user, DatabaseError *error)
 {
     SYNCCACHE_DB_D(ImageDatabase);

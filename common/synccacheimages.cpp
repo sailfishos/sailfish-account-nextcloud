@@ -182,8 +182,6 @@ void ImageCacheThreadWorker::requestPhotoCount(int accountId, const QString &use
 void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId, const QString &userId,
                                                    const QNetworkRequest &requestTemplate)
 {
-    Q_UNUSED(requestTemplate)
-
     DatabaseError error;
     User user = m_db.user(accountId, &error);
     if (error.errorCode != DatabaseError::NoError) {
@@ -195,15 +193,77 @@ void ImageCacheThreadWorker::populateUserThumbnail(int idempToken, int accountId
     }
 
     // the thumbnail already exists.
-    const QString thumbnailPath = user.thumbnailPath.toString();
+    QString thumbnailPath = user.thumbnailPath.toString();
     if (!thumbnailPath.isEmpty() && QFile::exists(thumbnailPath)) {
         emit populateUserThumbnailFinished(idempToken, thumbnailPath);
         return;
     }
 
-    // Thumbnail downloading is not supported at the moment. This is not an error,
-    // so just return an empty string.
-    emit populateUserThumbnailFinished(idempToken, QString());
+    thumbnailPath = m_db.findThumbnailForUser(accountId, userId, &error);
+    if (error.errorCode != DatabaseError::NoError) {
+        qWarning() << "Unable to fetch user thumbnail" << thumbnailPath << ":"
+                   << error.errorCode
+                   << error.errorMessage;
+    } else if (!thumbnailPath.isEmpty()) {
+        user.thumbnailPath = thumbnailPath;
+        m_db.storeUser(user, &error);
+        if (error.errorCode == DatabaseError::NoError) {
+            emit populateUserThumbnailFinished(idempToken, thumbnailPath);
+        } else {
+            emit populateUserThumbnailFailed(idempToken,
+                                              QStringLiteral("Cannot save thumbnail %1 for user %2 to db: %3")
+                                              .arg(thumbnailPath)
+                                              .arg(userId)
+                                              .arg(error.errorMessage));
+        }
+        return;
+    }
+
+    if (user.thumbnailUrl.isEmpty() || user.thumbnailFileName.isEmpty()) {
+        // Some user may not have preview metadata.
+        // This is not an error; caller can show a placeholder.
+        emit populateAlbumThumbnailFinished(idempToken, QString());
+        return;
+    }
+
+    // downloading for user thumbnails is done in Syncer::handleUserInfoReply,
+    // see buteo-sync-plugin-nextcloud-images/syncer.cpp
+
+    // otherwise, download thumbnail
+    /*
+    if (!m_downloader) {
+        m_downloader = new ImageDownloader(this);
+    }
+
+    ImageDownloadWatcher *watcher = m_downloader->downloadImage(
+                idempToken,
+                user.thumbnailUrl,
+                user.thumbnailFileName,
+                SyncCache::userImageDownloadDir(accountId, user.displayName, true),
+                requestTemplate);
+
+    connect(watcher, &ImageDownloadWatcher::downloadFailed, this,
+            [this, watcher, idempToken] (const QString &errorMessage) {
+        emit populateUserThumbnailFailed(idempToken, errorMessage);
+        watcher->deleteLater();
+    });
+
+    connect(watcher, &ImageDownloadWatcher::downloadFinished,
+            this, [this, watcher, user, idempToken] (const QUrl &filePath) {
+        DatabaseError storeError;
+        User userToStore = user;
+        userToStore.thumbnailPath = filePath;
+        m_db.storeUser(userToStore, &storeError);
+
+        if (storeError.errorCode != DatabaseError::NoError) {
+            QFile::remove(filePath.toString());
+            emit populateUserThumbnailFailed(idempToken, storeError.errorMessage);
+        } else {
+            emit populateUserThumbnailFinished(idempToken, filePath.toString());
+        }
+        watcher->deleteLater();
+    });
+    */
 }
 
 void ImageCacheThreadWorker::populateAlbumThumbnail(int idempToken, int accountId, const QString &userId,

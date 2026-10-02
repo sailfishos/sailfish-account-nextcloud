@@ -24,6 +24,7 @@ public:
 
     QNetworkReply *userInfo(const QByteArray &acceptContentType);
     QNetworkReply *capabilities(const QByteArray &acceptContentType);
+    QNetworkReply *downloadUserAvatar(const QString &userId);
 
     QNetworkReply *notificationList(const QByteArray &acceptContentType);
     QNetworkReply *deleteNotification(const QString &notificationId);

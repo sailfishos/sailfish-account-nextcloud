@@ -37,6 +37,7 @@ public:
 
 private:
     void handleUserInfoReply();
+    void handleUserAvatarReply();
     bool performDirListingRequest(const QString &remoteDirPath);
     void handleDirListingReply();
 

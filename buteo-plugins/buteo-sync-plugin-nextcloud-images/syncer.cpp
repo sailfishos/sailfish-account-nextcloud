@@ -17,6 +17,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QByteArray>
 #include <QtCore/QStandardPaths>
+#include <QMimeDatabase>
+#include <QSaveFile>
 
 // buteo
 #include <SyncProfile.h>
@@ -112,6 +114,95 @@ void Syncer::beginSync()
     }
 }
 
+void Syncer::handleUserAvatarReply()
+{
+    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+    reply->deleteLater();
+    const int httpCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if (reply->error() != QNetworkReply::NoError) {
+        finishWithHttpError("User avatar request failed", httpCode);
+        return;
+    }
+
+    // some sanity checks:
+    if (reply->hasRawHeader("X-NC-IsCustomAvatar")) {
+        if (reply->rawHeader("X-NC-IsCustomAvatar").toInt() != 1) {
+            qCWarning(lcNextcloud) << "No User avatar set for account:" << m_accountId;
+            return;
+        }
+        qCWarning(lcNextcloud) << "Server didn't send X-NC-IsCustomAvatar header for account:" << m_accountId;
+    }
+    // TODO: use QNetworkRequest::ContentDispositionHeader to yield: Content-Disposition: inline; filename="avatar.512.png"
+
+    QMimeDatabase mdb;
+    const QMimeType mime_png = mdb.mimeTypeForName(QStringLiteral("image/png"));
+    const QMimeType mime_jpg = mdb.mimeTypeForName(QStringLiteral("image/jpeg"));
+
+    const QString contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    if (!mime_png.inherits(contentType) && !mime_jpg.inherits(contentType)) {
+        qCWarning(lcNextcloud) << "Received unsupported User avatar image type" << contentType << "for account:" << m_accountId;
+        return;
+    }
+    const QMimeType mime_content = mdb.mimeTypeForData(reply);
+    if(!mime_content.inherits(contentType)) {
+        qCWarning(lcNextcloud) << "Received data does not match type" << contentType << "for account:" << m_accountId;
+        return;
+    }
+
+    // write reply data to file:
+    QSaveFile thumbFile(QStringLiteral("%1/system/privileged/Images/nextcloud/account-%2/useravatar.%3")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation))
+                .arg(m_accountId)
+                .arg(mime_content.preferredSuffix()));
+    thumbFile.setDirectWriteFallback(true);
+    qCDebug(lcNextcloud) << "Writing thumbnail to file:" << thumbFile.fileName();
+
+    if(!thumbFile.open(QIODevice::WriteOnly)) {
+        qCWarning(lcNextcloud) << "Failed to open thumbnail file for writing:" << thumbFile.fileName() << thumbFile.error();
+        return;
+    }
+    if(thumbFile.write(reply->readAll()) == -1) {
+        qCWarning(lcNextcloud) << "Failed to write thumbnail to file:" << thumbFile.fileName() << thumbFile.error();
+        return;
+    }
+
+    // Store the image path in the database
+    SyncCache::ImageDatabase db;
+    SyncCache::DatabaseError error;
+    db.openDatabase(
+            QStringLiteral("%1/system/privileged/Images/nextcloud.db")
+                .arg(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)),
+            &error);
+    if (error.errorCode != SyncCache::DatabaseError::NoError) {
+        qCWarning(lcNextcloud) << "Failed to open database to store user for account:" << m_accountId
+                    << ":" << error.errorMessage;
+        return;
+    }
+
+    SyncCache::User user = db.user(m_accountId, &error);
+    if (error.errorCode != SyncCache::DatabaseError::NoError) {
+        qCWarning(lcNextcloud) << "Failed to retrieve user from database for account:" << m_accountId
+                    << ":" << error.errorMessage;
+        return;
+    }
+
+    // finally write the file
+    if(thumbFile.commit()) {
+        user.thumbnailPath = thumbFile.fileName();
+        user.thumbnailFileName = thumbFile.fileName().split("/").last();
+
+        db.storeUser(user, &error);
+        if (error.errorCode != SyncCache::DatabaseError::NoError) {
+            qCWarning(lcNextcloud) << "Failed to store user:" << user.userId
+                        << error.errorCode << error.errorMessage;
+        }
+    } else
+        qCWarning(lcNextcloud) << "Could not write thumbnail to file:"
+                               << thumbFile.fileName() << thumbFile.error()
+                               << "contents will be lost.";
+}
+
 void Syncer::handleUserInfoReply()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
@@ -145,6 +236,21 @@ void Syncer::handleUserInfoReply()
     currentUser.accountId = m_accountId;
     currentUser.userId = user.userId;
     currentUser.displayName = user.displayName;
+
+    /* BEG: get the user avatar Url */
+    {
+    QNetworkReply *reply = m_requestGenerator->downloadUserAvatar(user.userId);
+    if (reply) {
+        connect(reply, &QNetworkReply::finished,
+            this, &Syncer::handleUserAvatarReply);
+    } else {
+        qCWarning(lcNextcloud) << "Failed to start User thumbnail request";
+        // not enough to throw an error here methinks:
+        // finishWithError(QStringLiteral("Failed to start user info request"));
+    }
+    }
+    /* END: get the user avatar */
+
     db.storeUser(currentUser, &error);
     if (error.errorCode != SyncCache::DatabaseError::NoError) {
         qCWarning(lcNextcloud) << "Failed to store user:" << currentUser.userId

@@ -35,9 +35,19 @@ Page {
             NextcloudDirectoryItem {
                 id: dirItem
 
+                property bool haveAvatar: model.thumbnailPath.length > 0 || model.thumbnailUrl.toString().length > 0
+
                 title: model.displayName
                 countText: photoModel.count
-                icon.source: "image://theme/icon-m-file-folder-nextcloud"
+                icon.sourceSize: haveAvatar
+                               ? Qt.size(512,512) // FIXME: use a plugin constant?
+                               : Qt.size(Theme.itemSizeMedium, Theme.itemSizeMedium)
+                icon.width:  Theme.itemSizeMedium
+                icon.height: Theme.itemSizeMedium
+                icon.source: !haveAvatar ? "image://theme/icon-m-file-folder-nextcloud"
+                           : ( model.thumbnailPath.length > 0
+                               ? model.thumbnailPath
+                               : model.thumbnailUrl )
             }
 
             NextcloudAlbumModel {
